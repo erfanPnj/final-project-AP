@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Course {
+public class Course implements Serializable {
     private final String courseName;
     private final Teacher courseTeacher;
     private final int countOfUnits;

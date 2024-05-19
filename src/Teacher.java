@@ -1,17 +1,22 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Teacher {
+public class Teacher implements Serializable {
     private final String name;
-    private final String familyName;
+    private final String id;
     private final int presentedCoursesCount;
     private List<Course> presentedCourses = new ArrayList<>();
 
-    public Teacher(String name, String familyName, int presentedCoursesCount) {
+    public Teacher(String name, String id, int presentedCoursesCount) {
         this.name = name;
-        this.familyName = familyName;
+        this.id = id;
         this.presentedCoursesCount = presentedCoursesCount;
         Faculty.getTeachers().add(this); // this teacher should be added to the faculty's teachers after initialization.
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setPresentedCourses(List<Course> presentedCourses) { // we can use this instead of addCourseToThisTeacher for adding a list of courses

@@ -8,12 +8,13 @@ public class Faculty {
     private static final List<Student> students = new ArrayList<>();
     private static final List<Teacher> teachers = new ArrayList<>();
     private static final List<Course> courses = new ArrayList<>();
+    private static final List<Assignment> assignments = new ArrayList<>();
 
     public Faculty(String name, int semester) {
         Faculty.semester = semester;
     }
     public void setSemester(int semester) {
-        this.semester = semester;
+        Faculty.semester = semester;
     }
     public static int getSemester() {
         return Faculty.semester;
@@ -30,6 +31,8 @@ public class Faculty {
     public static List<Course> getCourses() {
         return courses;
     }
+
+    public static List<Assignment> getAssignments() {return assignments;}
 
     public static void changeCourseStatus (Course course) {
         for (Course c : Faculty.courses) {
