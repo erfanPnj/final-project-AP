@@ -1,7 +1,7 @@
 # A University manager app made by Java and Dart (Flutter framework)
 The backend is developed using Java and Dart is used for frontend.
 ## Backend contains 5 classes:
-this classes were previously written in [miniProject repo] (https://github.com/erfanPnj/miniProject/)
+this classes were previously written in [miniProject repo](https://github.com/erfanPnj/miniProject/)
 ### Student.java:
 ```
 This class provides attributes and methods related to a student, like his/her name, student Id and etc.
