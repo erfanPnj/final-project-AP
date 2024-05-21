@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Teacher implements Serializable {
     private final String name;
@@ -13,6 +14,23 @@ public class Teacher implements Serializable {
         this.id = id;
         this.presentedCoursesCount = presentedCoursesCount;
         Faculty.getTeachers().add(this); // this teacher should be added to the faculty's teachers after initialization.
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Teacher teacher)) return false;
+        return Objects.equals(name, teacher.name) && Objects.equals(id, teacher.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id);
+    }
+
+    @Override
+    public String toString() {
+        return name + "-" + id + "-" + presentedCoursesCount; // Like: Ali-1234-3
     }
 
     public String getName() {

@@ -26,5 +26,10 @@ public class Assignment implements Serializable {
     public boolean isStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return name + "-" + deadline + "-" + status;
+    }
 }
 

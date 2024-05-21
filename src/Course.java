@@ -20,11 +20,18 @@ public class Course implements Serializable {
     public Course(String courseName, Teacher courseTeacher, int countOfUnits, String examDate, int presentedSemester, boolean status) {
         this.courseName = courseName;
         this.courseTeacher = courseTeacher;
+        if (!courseTeacher.getPresentedCourses().contains(this))
+            courseTeacher.addCourseToThisTeacher(this);
         this.countOfUnits = countOfUnits;
         this.examDate = examDate;
         this.presentedSemester = presentedSemester;
         this.status = status;
         Faculty.getCourses().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return courseName + "-" + courseTeacher.getName() + "-" + countOfUnits + "-" + examDate + "-" + status;
     }
 
     public void setStudentList(List<Student> studentList) {
@@ -102,8 +109,10 @@ public class Course implements Serializable {
     }
 
     public void addStudent (Student student) {
-        if (this.isStatus())
+        if (this.isStatus()) {
             studentList.add(student);
+            student.addCourseAndUnit(this); // adding student to a course means adding that course to that student courses and unit list!
+        }
     }
 
     public void eliminateStudent (Student student) {

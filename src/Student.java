@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Student implements Serializable {
     private final String name;
@@ -88,6 +89,18 @@ public class Student implements Serializable {
         return thisSemesterPoints;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Student student)) return false;
+        return Objects.equals(name, student.name) && Objects.equals(studentId, student.studentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, studentId);
+    }
+
     public void addCourseAndUnit (Course course) {
         this.courses.add(course);
         this.countOfUnits += course.getCountOfUnits();
@@ -112,4 +125,8 @@ public class Student implements Serializable {
     }
 
 
+    @Override
+    public String toString() {
+        return name + "-" + studentId; // Like: Erfan-4022
+    }
 }
