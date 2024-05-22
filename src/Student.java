@@ -18,7 +18,13 @@ public class Student {
     public Student(String name, String studentId) {
         this.name = name;
         this.studentId = studentId;
-        Faculty.getStudents().add(this);
+        int isAlreadyInFacultyList = 0;
+        for (Student s : Faculty.getStudents()) {
+            if (s.getId().equals(this.studentId))
+                isAlreadyInFacultyList++;
+        }
+        if (isAlreadyInFacultyList == 0)
+            Faculty.getStudents().add(this);
     }
 
     public void setAllOfPoints(double allOfPoints) {
@@ -104,6 +110,7 @@ public class Student {
     public void addCourseAndUnit (Course course) {
         this.courses.add(course);
         this.countOfUnits += course.getCountOfUnits();
+        this.countOfCourses += 1;
     }
 
     public void printStudentCourses () {

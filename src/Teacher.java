@@ -17,18 +17,6 @@ public class Teacher {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Teacher teacher)) return false;
-        return Objects.equals(name, teacher.name) && Objects.equals(id, teacher.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, id);
-    }
-
-    @Override
     public String toString() {
         return name + "-" + id + "-" + presentedCoursesCount; // Like: Ali-1234-3
     }
@@ -43,6 +31,10 @@ public class Teacher {
 
     public void addCourseToThisTeacher (Course course) {
         presentedCourses.add(course);
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<Course> getPresentedCourses() {
@@ -90,6 +82,7 @@ public class Teacher {
                         presentedCourses.get(i).setCountOfAssignments(presentedCourses.get(i).getCountOfAssignments() - 1);// decrease count of assignments after deletion
                     }
                 }
+                break;
             }
         }
     }
