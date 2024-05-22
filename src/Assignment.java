@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-public class Assignment implements Serializable {
+public class Assignment {
     private final String name;
     private int deadline; // it shows how many days left until deactivation.
     private boolean status; // shows this assignment is active or not.

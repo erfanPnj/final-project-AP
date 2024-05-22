@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Student implements Serializable {
+public class Student {
     private final String name;
     private final String studentId;
     private int countOfCourses;
