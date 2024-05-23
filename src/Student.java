@@ -129,9 +129,13 @@ public class Student {
 
     @Override
     public String toString() {
-        StringBuilder coursesString = new StringBuilder();
+        StringBuilder coursesString = new StringBuilder(); // this will show the course part in students.txt
         for (Course c : courses) {
-            coursesString.append("-").append(c.getCourseName());
+            StringBuilder grade = new StringBuilder();
+            if (c.getScores().containsKey(this)) { // check if there is a grade related to this student in course c
+                grade.append("/").append(c.getScores().get(this));
+            }
+            coursesString.append("-").append(c.getCourseName()).append(grade);
         }
         return name + "-" + studentId + coursesString; // Like: Erfan-4022-ap-ec
     }
