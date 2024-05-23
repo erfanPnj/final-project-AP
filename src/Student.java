@@ -18,13 +18,6 @@ public class Student {
     public Student(String name, String studentId) {
         this.name = name;
         this.studentId = studentId;
-        int isAlreadyInFacultyList = 0;
-        for (Student s : Faculty.getStudents()) {
-            if (s.getId().equals(this.studentId))
-                isAlreadyInFacultyList++;
-        }
-        if (isAlreadyInFacultyList == 0)
-            Faculty.getStudents().add(this);
     }
 
     public void setAllOfPoints(double allOfPoints) {
@@ -108,6 +101,8 @@ public class Student {
     }
 
     public void addCourseAndUnit (Course course) {
+        //course.addStudent(this);
+        course.getStudentList().add(this);
         this.courses.add(course);
         this.countOfUnits += course.getCountOfUnits();
         this.countOfCourses += 1;
@@ -134,6 +129,10 @@ public class Student {
 
     @Override
     public String toString() {
-        return name + "-" + studentId; // Like: Erfan-4022
+        StringBuilder coursesString = new StringBuilder();
+        for (Course c : courses) {
+            coursesString.append("-").append(c.getCourseName());
+        }
+        return name + "-" + studentId + coursesString; // Like: Erfan-4022-ap-ec
     }
 }

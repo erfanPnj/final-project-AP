@@ -7,20 +7,25 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    static void clearScreen () {
+    static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     } // which does not work in IDE's terminal!
 
     // we need to delete data from .txt files after performing a removal activity:
-    static void removeLineFromFile (String filePath, String clue) throws IOException{
+    static void removeLineFromFile(String filePath, String... clue) throws IOException {
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
         String lineToRemove = "";
 
         while (scanner.hasNextLine()) {
             String previouslyReadLine = scanner.nextLine();
-            if (previouslyReadLine.contains(clue)) {
+            int status = 0;
+            for (String c : clue) {
+                if (previouslyReadLine.contains(c))
+                    status++;
+            }
+            if (status == clue.length) {
                 lineToRemove += previouslyReadLine;
                 break;
             }
@@ -42,7 +47,7 @@ public class Main {
         Files.write(path, updatedLines);
     }
 
-    static void showTeacherMenu() {
+    static void showTeacherMenu() { //todo: It should go to view
         System.out.println("1. Show my courses.");
         System.out.println("2. Add student to a course.");
         System.out.println("3. Remove student from a course.");
@@ -52,7 +57,7 @@ public class Main {
         System.out.println("7. Change the deadline of an assignment.");
     }
 
-    static void showAdminMenu() {
+    static void showAdminMenu() {//todo: It should go to view
         System.out.println("1. Add a new teacher.");
         System.out.println("2. Add student to a course.");
         System.out.println("3. Remove student from a course.");
@@ -74,7 +79,7 @@ public class Main {
         }
     }
 
-    static void loadTeacherData (String filePath, List<Teacher> list) throws FileNotFoundException {
+    static void loadTeacherData(String filePath, List<Teacher> list) throws FileNotFoundException {
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
 
@@ -82,11 +87,13 @@ public class Main {
             String data = scanner.nextLine();
             String[] parts;
             parts = data.split("-");
-            list.add(new Teacher(parts[0], parts[1], Integer.parseInt(parts[2])));
+            Teacher teacher = new Teacher(parts[0], parts[1], Integer.parseInt(parts[2]));
+            list.add(teacher);
         }
     }
 
-    static void loadCourseData (String filePath, List<Course> list) throws FileNotFoundException{
+    static void loadCourseData(String filePath, List<Course> list) throws IOException {
+        // we need teachers data first, so we load it right here:
         loadTeacherData("src/teachers.txt", Faculty.getTeachers());
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
@@ -100,17 +107,23 @@ public class Main {
                 if (t.getName().equals(parts[1])) {
                     if (parts[4].equals("true")) {
                         list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), true));
-                        break;
+                        // update teachers data after adding course
+                        removeLineFromFile("src/teachers.txt", t.getId());
+                        writeData(t.toString(), "src/teachers.txt");
                     } else {
                         list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), false));
-                        break;
+                        removeLineFromFile("src/teachers.txt", t.getId());
+                        writeData(t.toString(), "src/teachers.txt");
                     }
+                    break;
                 }
             }
         }
     }
 
-    static void loadStudentData (String filePath, List<Student> list) throws FileNotFoundException{
+    static void loadStudentData(String filePath, List<Student> list) throws IOException {
+        // we need courses data first, so we load it here and by doing this, we have also loaded teachers data!
+        loadCourseData("src/courses.txt", Faculty.getCourses());
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
 
@@ -118,11 +131,20 @@ public class Main {
             String data = scanner.nextLine();
             String[] parts;
             parts = data.split("-");
-            list.add(new Student(parts[0], parts[1]));
+            Student student = new Student(parts[0], parts[1]);
+            if (parts.length >= 3) { // in case the student is not attended to any course, like Erfan-2222 (there is no parts[2])
+                for (int i = 2; i < parts.length; i++) {
+                    for (Course c : Faculty.getCourses()) {
+                        if (c.getCourseName().equals(parts[i]))
+                            student.addCourseAndUnit(c);
+                    }
+                }
+            }
+            list.add(student);
         }
     }
 
-    static void loadAssignmentData (String filePath, List<Assignment> list) throws FileNotFoundException{
+    static void loadAssignmentData(String filePath, List<Assignment> list) throws FileNotFoundException {
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
 
@@ -131,14 +153,30 @@ public class Main {
             String[] parts;
             parts = data.split("-");
             if (parts[2].equals("true"))
-                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true));
+                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true, parts[3]));
             else
-                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false));
+                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false, parts[3]));
         }
     }
 
     public static void main(String[] args) throws IOException {
         new Faculty("computerEngineering", 2);
+
+        // After each launch of the program, we need to load the data from text files:
+        loadStudentData("src/students.txt", Faculty.getStudents()); // also loads teachers data and courses data
+        loadAssignmentData("src/assignments.txt", Faculty.getAssignments());
+
+        //##################################################################################
+        System.out.println(Faculty.getTeachers().toString());
+        for (Teacher t : Faculty.getTeachers()) {
+            System.out.println(t.getId());
+        }
+        System.out.println(Faculty.getCourses().toString());
+        System.out.println(Faculty.getStudents().toString());
+        for (Student s : Faculty.getStudents()) {
+            System.out.println(s.getCourses().toString());
+        }
+        //##################################################################################
 
         System.out.println("Welcome to DaneshjooYar!\nPlease choose your roll:\n1. Teacher\n2. Admin");
         Scanner scanner = new Scanner(System.in);
@@ -147,19 +185,11 @@ public class Main {
 
         String name, id;
 
-        // After each launch of the program, we need to load the data from text files:
-        loadTeacherData("src/teachers.txt", Faculty.getTeachers());
-        loadCourseData("src/courses.txt", Faculty.getCourses());
-        loadStudentData("src/students.txt", Faculty.getStudents());
-        loadAssignmentData("src/assignments.txt", Faculty.getAssignments());
-        Faculty.getCourses().getFirst().addStudent(new Student("ali", "1234567"));
-        Faculty.getCourses().getFirst().getCourseTeacher().defineNewAssignment(Faculty.getCourses().getFirst(), "notFinal", true, 30);
-        Faculty.getCourses().getFirst().getCourseTeacher().rateStudents("bp", "1234567", 12.2);
-        Faculty.getCourses().getFirst().getCourseTeacher().rateStudents("bp", "1234567", 20.0);
+        System.out.println(Faculty.getAssignments().toString());
 
         switch (userInput) {
             case 1: {
-                System.out.println("Please enter your name.");
+                System.out.println("Please enter your name:");
                 Scanner scanner1 = new Scanner(System.in);
                 String teacherName = scanner1.nextLine();
                 int isTeacherRegistered = 0;
@@ -171,10 +201,9 @@ public class Main {
                     System.out.println("You are not registered in this faculty, please contact the admin for registration.");
                     break;
                 }
-                System.out.println("Please enter your teacher ID.");
+                System.out.println("Please enter your teacher ID:");
                 Scanner scanner2 = new Scanner(System.in);
                 String teacherId = scanner2.nextLine();
-                int i = 0;
                 for (Teacher t : Faculty.getTeachers()) {
                     if (t.getName().equals(teacherName) && t.getId().equals(teacherId)) {
                         System.out.println("Welcome!\n\n");
@@ -187,7 +216,8 @@ public class Main {
                                         System.out.println(c.getCourseName());
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                             case 2: {
                                 System.out.println("What's the student's name?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -199,13 +229,37 @@ public class Main {
                                 Scanner scanner5 = new Scanner(System.in);
                                 String courseName = scanner5.nextLine();
 
-                                for (Course c : Faculty.getCourses()) {
-                                    if (c.getCourseName().equals(courseName) && c.getCourseTeacher().getId().equals(teacherId)) {
-                                        c.addStudent(new Student(studentName, studentId));
+                                int isAlreadyWritten = 0;
+                                Student student = new Student(studentName, studentId);
+                                for (Student s : Faculty.getStudents()) {
+                                    if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
+                                        removeLineFromFile("src/students.txt", studentId); // remove the previous data
+                                        for (Course c : Faculty.getCourses()) {
+                                            if (c.getCourseName().equals(courseName)) {
+                                                isAlreadyWritten = 1; // we found the target
+                                                s.addCourseAndUnit(c);
+                                                writeData(s.toString(), "src/students.txt"); // write the updated data to file
+                                                System.out.println("Done!");
+                                                break;
+                                            }
+                                        }
                                         break;
                                     }
                                 }
-                            } break;
+
+                                if (isAlreadyWritten == 0) { // If this is a new student, we use the new object (student) and add
+                                    // it to course and also the text file
+                                    for (Course c : Faculty.getCourses()) {
+                                        if (c.getCourseName().equals(courseName)) {
+                                            c.addStudent(student);
+                                            writeData(student.toString(), "src/students.txt"); // save the student to students.txt
+                                            System.out.println("Done!");
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                             case 3: {
                                 System.out.println("What's the student name?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -219,11 +273,18 @@ public class Main {
 
                                 for (Course c : Faculty.getCourses()) {
                                     if (c.getCourseName().equals(courseName) && c.getCourseTeacher().getId().equals(teacherId)) {
-                                        c.eliminateStudent(new Student(studentName, studentId));
+                                        removeLineFromFile("src/students.txt", studentId);
+                                        for (Student s : Faculty.getStudents()) {
+                                            if (s.getId().equals(studentId)) {
+                                                c.eliminateStudent(s);
+                                                writeData(s.toString(), "src/students.txt");
+                                            }
+                                        }
                                         break;
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                             case 4: {
                                 System.out.println("Great! for which course do you wanna define a new assignment?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -237,11 +298,14 @@ public class Main {
 
                                 for (Course c : Faculty.getCourses()) {
                                     if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
-                                        c.getCourseTeacher().defineNewAssignment(c, assignmentName, true, deadline);
+                                        Assignment assignment = new Assignment(assignmentName, deadline, true, courseName);
+                                        writeData(assignment.toString(), "src/assignments.txt");
+                                        c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, deadline);
                                         break;
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                             case 5: {
                                 System.out.println("From what course do you want to delete an assignment?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -252,11 +316,13 @@ public class Main {
 
                                 for (Course c : Faculty.getCourses()) {
                                     if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
+                                        removeLineFromFile("src/assignments.txt", assignmentName, courseName);
                                         c.getCourseTeacher().deleteAnAssignment(c.getCourseName(), assignmentName);
                                         break;
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                             case 6: {
                                 System.out.println("What's the student's ID?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -274,7 +340,8 @@ public class Main {
                                         break;
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                             case 7: {
                                 System.out.println("For what course is this assignment?");
                                 Scanner scanner3 = new Scanner(System.in);
@@ -289,22 +356,32 @@ public class Main {
                                 for (Course c : Faculty.getCourses()) {
                                     if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
                                         c.getCourseTeacher().changeAssignmentDeadline(assignmentName, newDeadline);
+                                        Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseName);
+                                        removeLineFromFile("src/assignments.txt", courseName, assignmentName);
+                                        writeData(assignment.toString(), "src/assignments.txt");
                                         break;
                                     }
                                 }
                             }
+                            break;
                         }
-                    } else if (!t.getId().equals(teacherId)) {
-                        System.out.println("Wrong ID!");
                     }
-                    break;
+//                    else if(!t.getId().equals(teacherId)) {
+//                        System.out.println("Wrong name/Id!");
+////                        continue;
+//                    }
+                    else {
+                        continue;
+                    }
+                    break; // we only want to process this teacher's requests
                 }
-            } break;
-            case 2:{
+            }
+            break;
+            case 2: {
                 showAdminMenu();
                 userInput = scanner.nextInt();
                 switch (userInput) {
-                    case 1:{ // Here the admin can define a new teacher and save the data in a text file using toString method in Teacher.java:
+                    case 1: { // Here the admin can define a new teacher and save the data in a text file using toString method in Teacher.java:
                         System.out.println("Great! What is the name of this teacher?");
                         Scanner s = new Scanner(System.in);
                         name = s.nextLine();
@@ -316,14 +393,14 @@ public class Main {
                         writeData(new Teacher(name, id, userInput).toString(), "src/teachers.txt");
                     }
                     break;
-                    case 2:{
+                    case 2: {
                         File file = new File("src/courses.txt");
 
                         if (file.length() == 0) {
                             System.out.println("Oops! there isn't any defined course, first define a course so you can \n" +
                                     "add a student to that course.");
-                            System.out.println("Your can create a course now or come back later!");
-                            System.out.println("write 'OK' to create it now");
+                            System.out.println("Your can define a course now or come back later!");
+                            System.out.println("write 'OK' to define it now");
                             Scanner sc = new Scanner(System.in);
                             String adminCreatesCourse = sc.nextLine();
                             if (adminCreatesCourse.equalsIgnoreCase("ok")) {
@@ -345,19 +422,12 @@ public class Main {
                                 for (Teacher t : Faculty.getTeachers()) {
                                     if (t.getName().equals(teacherName)) {
                                         course = new Course(courseName, t, userInput, courseExamDate, Faculty.getSemester(), true);
+                                        t.addCourseToThisTeacher(course);
                                         writeData(course.toString(), "src/courses.txt");
                                         break;
                                     }
                                 }
-
-                                System.out.println("Course has been successfully created!\n\n\nWhat's the student's name?");
-                                Scanner scanner4 = new Scanner(System.in);
-                                String studentName = scanner4.nextLine();
-                                System.out.println("And what's the student ID?");
-                                Scanner scanner5 = new Scanner(System.in);
-                                String studentId = scanner5.nextLine();
-                                Student student = new Student(studentName, studentId);
-                                writeData(student.toString(), "src/students.txt"); // save the student to students.txt
+                                System.out.println("Course has been successfully created!");
                             } else {
                                 System.out.println("That's all right!\n See you later Admin!");
                             }
@@ -371,18 +441,39 @@ public class Main {
                             System.out.println("What's the student ID?");
                             Scanner scanner2 = new Scanner(System.in);
                             String studentId = scanner2.nextLine();
+                            // we should check if the student is already in student.txt
+                            int isAlreadyWritten = 0;
                             Student student = new Student(studentName, studentId);
-                            writeData(student.toString(), "src/students.txt"); // save the student to students.txt
-
-                            for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName)) {
-                                    c.addStudent(student);
-                                    System.out.println("Done!");
+                            for (Student s : Faculty.getStudents()) {
+                                if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
+                                    removeLineFromFile("src/students.txt", studentId); // remove the previous data
+                                    for (Course c : Faculty.getCourses()) {
+                                        if (c.getCourseName().equals(courseName)) {
+                                            isAlreadyWritten = 1; // we found the target
+                                            s.addCourseAndUnit(c);
+                                            writeData(s.toString(), "src/students.txt"); // write the updated data to file
+                                            System.out.println("Done!");
+                                            break;
+                                        }
+                                    }
                                     break;
                                 }
                             }
+
+                            if (isAlreadyWritten == 0) { // If this is a new student, we use the new object (student) and add
+                                // it to course and also the text file
+                                for (Course c : Faculty.getCourses()) {
+                                    if (c.getCourseName().equals(courseName)) {
+                                        c.addStudent(student);
+                                        writeData(student.toString(), "src/students.txt"); // save the student to students.txt
+                                        System.out.println("Done!");
+                                        break;
+                                    }
+                                }
+                            }
                         }
-                    } break;
+                    }
+                    break;
                     case 3: {
                         System.out.println("What's the student's name?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -397,14 +488,17 @@ public class Main {
                             if (c.getCourseName().equals(courseName)) {
                                 for (Student s : c.getStudentList()) {
                                     if (s.equals(new Student(studentName, studentId))) {
-                                        c.eliminateStudent(new Student(studentName, studentId));
+                                        c.eliminateStudent(s);
+                                        removeLineFromFile("src/students.txt", studentId); // delete the old data
+                                        writeData(s.toString(), "src/students.txt"); // write the updated data
                                         System.out.println("Done eliminating student!");
                                         break;
                                     }
                                 }
                             }
                         }
-                    } break;
+                    }
+                    break;
                     case 4: {
                         System.out.println("What's the name of the course you want to delete?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -416,7 +510,8 @@ public class Main {
                                 break;
                             }
                         }
-                    } break;
+                    }
+                    break;
                     case 5: {
                         System.out.println("For what course are you defining this assignment? (write only course name)");
                         Scanner scanner1 = new Scanner(System.in);
@@ -429,12 +524,13 @@ public class Main {
                         int assignmentDeadline = scanner3.nextInt();
                         for (Course c : Faculty.getCourses()) {
                             if (c.getCourseName().equals(courseName)) {
-                                c.getCourseTeacher().defineNewAssignment(c, assignmentName, true, assignmentDeadline);
+                                c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, assignmentDeadline);
                                 writeData(c.getActiveProjects().getLast().toString(), "src/assignments.txt");
                                 break;
                             }
                         }
-                    } break;
+                    }
+                    break;
                     case 6: { // deleteAnAssignment method is in Teacher.java, so we should somehow reach out to the teacher and invoke this method:
                         System.out.println("Ok! for what course was this assignment defined?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -448,9 +544,10 @@ public class Main {
                                 break;
                             }
                         }
-                        removeLineFromFile("src/assignments.txt", assignmentName);
+                        removeLineFromFile("src/assignments.txt", assignmentName); // assignment is removed from file
                         System.out.println("Your desired assignment has been successfully deleted.");
-                    } break;
+                    }
+                    break;
                     case 7: {
                         System.out.println("Ok! for what course was this assignment defined?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -461,17 +558,21 @@ public class Main {
                         for (Assignment a : Faculty.getAssignments()) {
                             if (a.getName().equals(assignmentName)) {
                                 if (!a.isStatus())
-                                    System.out.println("Your cannot change the deadline of a unactivated assignment.");
+                                    System.out.println("You cannot change the deadline of a unactivated assignment.");
                                 else {
                                     System.out.println("How much do you wanna give time to students:)? (how many days)");
                                     Scanner scanner3 = new Scanner(System.in);
                                     int newDeadline = scanner3.nextInt();
                                     a.setDeadline(newDeadline);
+                                    removeLineFromFile("src/assignments.txt", assignmentName, courseName);
+                                    writeData(a.toString(), "src/assignments.txt");
                                 }
                                 break;
                             }
                         }
-                    } break;
+                    }
+                    break;
+                    //todo: RATING STUDENTS ISN'T SAVED, BECAUSE STUDENT.toString() IGNORES GRADES. FIX THIS.
                     case 8: { // Just like case 6, we need to reach out to the teacher and invoke the rateStudents method
                         System.out.println("What's the student's ID?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -489,7 +590,8 @@ public class Main {
                             }
                         }
                         System.out.println("Done rating the student!");
-                    } break;
+                    }
+                    break;
                     case 9: {
                         System.out.println("What's your student's ID?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -501,7 +603,8 @@ public class Main {
                                 break;
                             }
                         }
-                    } break;
+                    }
+                    break;
                     case 10: {
                         System.out.println("What's the student's ID?");
                         Scanner scanner1 = new Scanner(System.in);
@@ -516,11 +619,13 @@ public class Main {
                                 break;
                             }
                         }
-                    } break;
-
+                    }
+                    break;
                 }
             }
         }
-
     }
 }
+
+
+

@@ -26,7 +26,6 @@ public class Course {
         this.examDate = examDate;
         this.presentedSemester = presentedSemester;
         this.status = status;
-        Faculty.getCourses().add(this);
     }
 
     @Override
@@ -111,7 +110,10 @@ public class Course {
     public void addStudent (Student student) {
         if (this.isStatus()) {
             studentList.add(student);
-            student.addCourseAndUnit(this); // adding student to a course means adding that course to that student courses and unit list!
+            // adding student to a course means adding that course to that student courses and unit list!
+            student.getCourses().add(this);
+            student.setCountOfCourses(student.getCountOfCourses() + 1);
+            student.setCountOfUnits(student.getCountOfUnits() + this.countOfUnits);
         }
     }
 
@@ -120,6 +122,7 @@ public class Course {
         // after eliminating a student from a course, it should drop the course and unit:
         student.setCountOfCourses(student.getCountOfCourses() - 1);
         student.setCountOfUnits(student.getCountOfUnits() - this.countOfUnits);
+        student.getCourses().remove(this); // remove the course from student's courses list
         for (Student k : scores.keySet()) {
             if (k.getId().equals(student.getId())) {
                 scores.remove(k);

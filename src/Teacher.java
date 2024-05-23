@@ -13,12 +13,16 @@ public class Teacher {
         this.name = name;
         this.id = id;
         this.presentedCoursesCount = presentedCoursesCount;
-        Faculty.getTeachers().add(this); // this teacher should be added to the faculty's teachers after initialization.
     }
 
     @Override
     public String toString() {
-        return name + "-" + id + "-" + presentedCoursesCount; // Like: Ali-1234-3
+        StringBuilder coursesString = new StringBuilder();
+        for (Course c : presentedCourses) {
+            if (c.getCourseTeacher().getId().equals(this.id))
+                coursesString.append("-").append(c.getCourseName());
+        }
+        return name + "-" + id + "-" + presentedCoursesCount + coursesString; // Like: Ali-1234-3
     }
 
     public String getName() {
@@ -30,6 +34,10 @@ public class Teacher {
     }
 
     public void addCourseToThisTeacher (Course course) {
+        if (presentedCoursesCount == presentedCourses.size() - 1) {
+            System.out.println("This teacher has reached to maximum course count!");
+            return;
+        }
         presentedCourses.add(course);
     }
 
@@ -53,11 +61,11 @@ public class Teacher {
         course.eliminateStudent(student);
     }
 
-    public void defineNewAssignment (Course course, String assignmentName,
+    public void defineNewAssignment (String courseName, String assignmentName,
                                      boolean assignmentStatus, int deadline) {
         for (Course c : presentedCourses) {
-            if (c.getCourseName().equals(course.getCourseName())) {
-                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus));
+            if (c.getCourseName().equals(courseName)) {
+                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus, c.getCourseName()));
                 c.setCountOfAssignments(c.getCountOfAssignments() + 1);
             }
         }
