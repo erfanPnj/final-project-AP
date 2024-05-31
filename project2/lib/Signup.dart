@@ -50,7 +50,7 @@ class _SignupState extends State<Signup> {
                 style: TextStyle(color: Colors.white),
               ),
               content: Text(
-                "Youre username is too short!",
+                "Your username is too short!",
                 style: TextStyle(color: Colors.white),
               ),
               backgroundColor: Colors.blue.shade900,
