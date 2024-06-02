@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Student {
     private final String name;
     private final String studentId;
+    private final String password;
     private int countOfCourses;
     private int countOfUnits;
     private final List<Course> courses = new ArrayList<>();
@@ -14,9 +15,10 @@ public class Student {
     private double countOfThisSemesterGrades = 0;
 
 
-    public Student(String name, String studentId) {
+    public Student(String name, String studentId, String password) {
         this.name = name;
         this.studentId = studentId;
+        this.password = password;
     }
 
     public void setAllOfPoints(double allOfPoints) {
@@ -136,6 +138,10 @@ public class Student {
             }
             coursesString.append("-").append(c.getCourseName()).append(grade);
         }
-        return name + "-" + studentId + coursesString; // Like: Erfan-4022-ap-ec
+        return name + "-" + studentId + "-" + password + coursesString; // Like: Erfan-4022-ap-ec
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
