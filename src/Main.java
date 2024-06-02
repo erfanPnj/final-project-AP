@@ -133,9 +133,9 @@ public class Main {
             String data = scanner.nextLine();
             String[] parts;
             parts = data.split("-");
-            Student student = new Student(parts[0], parts[1]);
-            if (parts.length >= 3) { // in case the student is not attended to any course, like Erfan-2222 (there is no parts[2])
-                for (int i = 2; i < parts.length; i++) {
+            Student student = new Student(parts[0], parts[1], parts[2]);
+            if (parts.length >= 4) { // in case the student is not attended to any course, like Erfan-2222 (there is no parts[2])
+                for (int i = 3; i < parts.length; i++) {
                     if (parts[i].contains("/")) {
                         String[] courseGradePair = parts[i].split("/");
                         for (Course c : Faculty.getCourses()) {
@@ -175,6 +175,24 @@ public class Main {
             else
                 list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false, parts[3]));
         }
+    }
+
+    static void singUp (String studentData) {
+        String[] parts = studentData.split("-");
+        Student student = new Student(parts[0], parts[1], parts[2]);
+
+        writeData(student.toString(), "src/students.txt");
+        Faculty.getStudents().add(student);
+    }
+
+    static Student login (String studentId, String studentPassword) {
+        for (Student s : Faculty.getStudents()) {
+            if (s.getId().equals(studentId) && s.getPassword().equals(studentPassword)) {
+                return s;
+            }
+        }
+        // then we check if the student's password is equal to the string "null", this is not a registered student
+        return new Student("null", "null", "null");
     }
 
     public static void main(String[] args) throws IOException {
@@ -266,7 +284,7 @@ public class Main {
 
                                     if (isAlreadyWritten == 0) { // If this is a new student, we create a new object (student) and add
                                         // it to course and also the text file
-                                        Student student = new Student(studentName, studentId);
+                                        Student student = new Student(studentName, studentId, "@" + studentId); // @ + student ID is a default password
                                         for (Course c : Faculty.getCourses()) {
                                             if (c.getCourseName().equals(courseName)) {
                                                 c.addStudent(student);
@@ -467,7 +485,7 @@ public class Main {
                                 String studentId = scanner2.nextLine();
                                 // we should check if the student is already in student.txt
                                 int isAlreadyWritten = 0;
-                                Student student = new Student(studentName, studentId);
+                                Student student = new Student(studentName, studentId, "@" + studentId);
                                 for (Student s : Faculty.getStudents()) {
                                     if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
                                         removeLineFromFile("src/students.txt", studentId); // remove the previous data
@@ -505,13 +523,17 @@ public class Main {
                             out.println("What's the student's id?");
                             String studentId = scanner1.nextLine();
 
+                            out.println("What's the student's password?");
+                            String studentPassword = scanner1.nextLine();
+
+
                             out.println("What's the course name?");
                             Scanner scanner2 = new Scanner(in);
                             String courseName = scanner2.nextLine();
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseName().equals(courseName)) {
                                     for (Student s : c.getStudentList()) {
-                                        if (s.equals(new Student(studentName, studentId))) {
+                                        if (s.equals(new Student(studentName, studentId, studentPassword))) {
                                             c.eliminateStudent(s);
                                             removeLineFromFile("src/students.txt", studentId); // delete the old data
                                             writeData(s.toString(), "src/students.txt"); // write the updated data
