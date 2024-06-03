@@ -146,7 +146,6 @@ class _SignupState extends State<Signup> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
