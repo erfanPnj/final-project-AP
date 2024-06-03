@@ -19,6 +19,19 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  bool passwordVisible = false;
+  bool passwordVisible2 = false;
+
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible2 = true;
+    passwordVisible = true;
+  }
+
+  RegExp regex = RegExp(r'^\d+$');
+  // RegExp reg1 = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*$');
+  RegExp regex2 = RegExp(r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$');
   void signup() {
     if (widget.Password.text != (widget.confirmPassword.text)) {
       showDialog(
@@ -40,7 +53,7 @@ class _SignupState extends State<Signup> {
               ],
             );
           });
-    } else if (widget.Name.text.length < 8) {
+    } else if (!regex.hasMatch(widget.Studentnumber.text)) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -50,7 +63,67 @@ class _SignupState extends State<Signup> {
                 style: TextStyle(color: Colors.white),
               ),
               content: Text(
-                "Youre username is too short!",
+                "Student number should only contains numbers!",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.blue.shade900,
+              actions: [
+                ElevatedButton(
+                    onPressed: Navigator.of(context).pop, child: Text("Ok"))
+              ],
+            );
+          });
+    } else if (widget.Password.text.length < 8) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                "Error",
+                style: TextStyle(color: Colors.white),
+              ),
+              content: Text(
+                "Your password is too short!",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.blue.shade900,
+              actions: [
+                ElevatedButton(
+                    onPressed: Navigator.of(context).pop, child: Text("Ok"))
+              ],
+            );
+          });
+    } else if (widget.Password.text.contains(widget.Name.text)) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                "Error",
+                style: TextStyle(color: Colors.white),
+              ),
+              content: Text(
+                "Your password should not contains your name!",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.blue.shade900,
+              actions: [
+                ElevatedButton(
+                    onPressed: Navigator.of(context).pop, child: Text("Ok"))
+              ],
+            );
+          });
+    } else if (!regex2.hasMatch(widget.Password.text)) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                "Error",
+                style: TextStyle(color: Colors.white),
+              ),
+              content: Text(
+                "Your password should contain at least one capital and one small letter and one number!",
                 style: TextStyle(color: Colors.white),
               ),
               backgroundColor: Colors.blue.shade900,
@@ -196,16 +269,35 @@ class _SignupState extends State<Signup> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 20, 15),
                     child: TextField(
+                      obscureText: passwordVisible2,
                       controller: widget.Password,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25)),
-                          icon: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Icon(Icons.lock),
-                          ),
-                          iconColor: Colors.blue.shade900,
-                          hintText: "Password"),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25)),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Icon(Icons.lock),
+                        ),
+                        iconColor: Colors.blue.shade900,
+                        hintText: "Password",
+                        fillColor: Colors.white,
+                        suffixIcon: IconButton(
+                          icon: Icon(passwordVisible2
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(
+                              () {
+                                passwordVisible2 = !passwordVisible2;
+                              },
+                            );
+                          },
+                        ),
+                        alignLabelWithHint: false,
+                        filled: true,
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
                     ),
                   ),
                   Padding(
@@ -214,16 +306,35 @@ class _SignupState extends State<Signup> {
                       height: 80,
                       width: 700,
                       child: TextField(
+                        obscureText: passwordVisible,
                         controller: widget.confirmPassword,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Icon(Icons.lock_outline),
-                            ),
-                            iconColor: Colors.blue.shade900,
-                            hintText: "Confirm password"),
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25)),
+                          hintText: "Confirm password",
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Icon(Icons.lock_outline),
+                          ),
+                          iconColor: Colors.blue.shade900,
+                          suffixIcon: IconButton(
+                            icon: Icon(passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(
+                                () {
+                                  passwordVisible = !passwordVisible;
+                                },
+                              );
+                            },
+                          ),
+                          alignLabelWithHint: false,
+                          filled: true,
+                        ),
+                        keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.done,
                       ),
                     ),
                   ),
