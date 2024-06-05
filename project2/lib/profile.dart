@@ -11,11 +11,10 @@ class profile extends StatefulWidget {
   profile(
       {super.key,
       required this.name,
-      required this.email,
       required this.studentNumber,
       required this.password});
+
   String? name;
-  String? email;
   String? studentNumber;
   String? password;
 
@@ -25,8 +24,7 @@ class profile extends StatefulWidget {
 
 class _profileState extends State<profile> {
   String? _name;
-  String? _email;
-  String? _studentNumber;
+  String? _studentId;
   String? _password;
 
   File? _image;
@@ -46,8 +44,7 @@ class _profileState extends State<profile> {
   void initState() {
     super.initState();
     _name = widget.name;
-    _email = widget.email;
-    _studentNumber = widget.studentNumber;
+    _studentId = widget.studentNumber;
     _password = widget.password;
   }
 
@@ -64,210 +61,188 @@ class _profileState extends State<profile> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ChangeProfileDetails();
+        return ChangeProfileDetails(
+          id: _studentId,
+          name: _name,
+          password: _password,
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-          body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 300,
-              width: 500,
-              child: Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 25, 0, 10),
-                      child: Row(
-                        children: [
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(0, 35, 310, 20),
-                          Icon(
-                            Icons.home,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                          // ),
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(0, 35, 400, 20),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 290),
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Signup()));
-                                },
-                                icon: Icon(
-                                  Icons.logout,
-                                  size: 30,
-                                  color: Colors.white,
-                                )),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: _image == null
-                              ? CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIKcTkARlljahDz7xR5gq-lwY3NSwsYMQdl_AlXfua4Yc2QcQ9QIG38gxtEiMGNAdoEck&usqp=CAU",
-                                  ),
-                                  radius: 80,
-                                  backgroundColor: Colors.grey[200],
-                                )
-                              : CircleAvatar(
-                                  radius: 80,
-                                  backgroundImage: FileImage(_image!),
-                                ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+            body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 300,
+                width: 500,
+                child: Container(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 25, 0, 10),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.home,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 290),
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Signup()));
+                                  },
+                                  icon: Icon(
+                                    Icons.logout,
+                                    size: 30,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
+                      ),
+                      Stack(
+                        children: [
+                          GestureDetector(
                             onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.blue,
+                            child: _image == null
+                                ? CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIKcTkARlljahDz7xR5gq-lwY3NSwsYMQdl_AlXfua4Yc2QcQ9QIG38gxtEiMGNAdoEck&usqp=CAU",
+                                    ),
+                                    radius: 80,
+                                    backgroundColor: Colors.grey[200],
+                                  )
+                                : CircleAvatar(
+                                    radius: 80,
+                                    backgroundImage: FileImage(_image!),
+                                  ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.blue,
+                                ),
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(color: Colors.blue.shade900),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 40, 0, 40),
+                child: Row(
+                  children: [
+                    Text(
+                      "name: ",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        (_name ?? ''),
+                        style: TextStyle(
+                          fontSize: 20,
+                          // fontFamily: FontWeight.bold
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-                decoration: BoxDecoration(color: Colors.blue.shade900),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 40, 0, 40),
-              child: Row(
-                children: [
-                  Text(
-                    "name: ",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      (_name ?? ''),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
+                child: Row(
+                  children: [
+                    Text(
+                      "Student Number: ",
                       style: TextStyle(
                         fontSize: 20,
-                        // fontFamily: FontWeight.bold
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
-              child: Row(
-                children: [
-                  Text(
-                    "Email: ",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      (_email ?? ''),
-                      style: TextStyle(
-                        fontSize: 20,
-                        // fontFamily: FontWeight.bold
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        (_studentId ?? ''),
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
-              child: Row(
-                children: [
-                  Text(
-                    "Student Number: ",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      (_studentNumber ?? ''),
-                      style: TextStyle(
-                        fontSize: 20,
-                        // fontFamily: FontWeight.bold
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 50,
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  showChangeProfileDialog(context);
-                },
-                child: Text(
-                  "Change profile",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
+                    )
+                  ],
                 ),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Colors.blue.shade900)),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: SizedBox(
+              SizedBox(
                 height: 50,
                 width: 200,
                 child: ElevatedButton(
                   onPressed: () {
-                    showChangePasswordDialog(context);
+                    showChangeProfileDialog(context);
                   },
                   child: Text(
-                    "Change password",
+                    "Change profile",
                     style: TextStyle(
                       color: Colors.white,
                     ),
                   ),
                   style: ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.blue.shade900)),
+                          WidgetStatePropertyAll(Colors.blue.shade900)),
                 ),
               ),
-            )
-          ],
-        ),
-      )),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  height: 50,
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showChangePasswordDialog(context);
+                    },
+                    child: Text(
+                      "Change password",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Colors.blue.shade900)),
+                  ),
+                ),
+              )
+            ],
+          ),
+        )),
+      ),
     );
   }
 }

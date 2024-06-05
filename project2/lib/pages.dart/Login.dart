@@ -1,18 +1,14 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
 
 class login extends StatelessWidget {
   login({super.key});
 
-  TextEditingController emailController = TextEditingController();
+  TextEditingController studentIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
-  void checkIfPossible() {
-    print(emailController.text);
-    print(passwordController.text);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +21,8 @@ class login extends StatelessWidget {
           backgroundColor: Colors.white,
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
               },
               icon: Icon(Icons.arrow_back_ios_new_sharp)),
         ),
@@ -42,16 +39,16 @@ class login extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 20, 15),
               child: TextField(
-                controller: emailController,
+                controller: studentIdController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25)),
                     icon: Padding(
                       padding: const EdgeInsets.only(left: 8),
-                      child: Icon(Icons.email),
+                      child: Icon(Icons.numbers),
                     ),
                     iconColor: Colors.blue.shade900,
-                    hintText: "Email"),
+                    hintText: "Student Id"),
               ),
             ),
             Padding(
@@ -75,17 +72,18 @@ class login extends StatelessWidget {
                 height: 50,
                 width: 250,
                 child: ElevatedButton(
-                    style: ButtonStyle(
-                      textStyle: WidgetStateProperty.all(
-                          TextStyle(color: Colors.white)),
-                      backgroundColor:
-                          WidgetStateProperty.all(Colors.blue.shade900),
-                    ),
-                    onPressed: checkIfPossible,
-                    child: Text(
-                      "Login",
-                      style: TextStyle(color: Colors.white),
-                    )),
+                  style: ButtonStyle(
+                    textStyle:
+                        WidgetStateProperty.all(TextStyle(color: Colors.white)),
+                    backgroundColor:
+                        WidgetStateProperty.all(Colors.blue.shade900),
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ),
             Row(
@@ -95,14 +93,15 @@ class login extends StatelessWidget {
                   child: Text("Don't have an account?"),
                 ),
                 TextButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Signup()));
-                    },
-                    child: Text(
-                      "SIGN UP!",
-                      style: TextStyle(color: Colors.blue.shade900),
-                    ))
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Signup()));
+                  },
+                  child: Text(
+                    "SIGN UP!",
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                )
               ],
             )
           ],

@@ -1,25 +1,52 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:project2/profile.dart';
 
 class ChangeProfileDetails extends StatefulWidget {
-  const ChangeProfileDetails({super.key});
+  ChangeProfileDetails({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.password,
+  });
+
+  String? id;
+  String? name;
+  String? password;
 
   @override
   State<ChangeProfileDetails> createState() => _ChangeProfileDetailsState();
 }
 
 class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
+  String? _name;
+  String? _id;
+  String? _password;
+  late TextEditingController _nameController;
+  late TextEditingController _idController;
   final TextEditingController _detailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? _selectedDetail;
 
-  final List<String> _details = [
-    'Username',
-    'Email',
-    'Phone Number',
-    'Address'
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.name);
+    _idController = TextEditingController(text: widget.id);
+
+    _nameFocusNode.addListener(() {
+      setState(() {});
+    });
+    _idFocusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  Color gray = Color.fromARGB(255, 180, 169, 169);
+  Color white = Colors.white;
+  FocusNode _nameFocusNode = FocusNode();
+
+  FocusNode _idFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -33,58 +60,56 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              DropdownButtonFormField<String>(
-                value: _selectedDetail,
-                dropdownColor: Colors.blue.shade900,
-                style: TextStyle(color: Colors.white),
+              TextField(
+                focusNode: _nameFocusNode,
+                style: TextStyle(
+                  color: _nameFocusNode.hasFocus
+                      ? Colors.white
+                      : Color.fromARGB(255, 180, 169, 169),
+                ),
                 decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  labelStyle: TextStyle(color: Colors.white),
-                  labelText: 'Select Detail to Edit',
-                ),
-                items: _details.map((String detail) {
-                  return DropdownMenuItem<String>(
-                    value: detail,
-                    child: Text(detail),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedDetail = newValue;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a detail to edit';
-                  }
-                  return null;
-                },
-              ),
-              if (_selectedDetail != null)
-                TextFormField(
-                  cursorColor: Colors.white,
-                  controller: _detailController,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _nameFocusNode.hasFocus
+                          ? Colors.white
+                          : Color.fromARGB(255, 180, 169, 169),
                     ),
-                    labelStyle: TextStyle(color: Colors.white),
-                    labelText: 'New ${_selectedDetail!}',
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new ${_selectedDetail!.toLowerCase()}';
-                    }
-                    return null;
-                  },
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
+                controller: _nameController,
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              TextField(
+                focusNode: _idFocusNode,
+                style: TextStyle(
+                  color: _idFocusNode.hasFocus
+                      ? Colors.white
+                      : Color.fromARGB(255, 180, 169, 169),
+                ),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _idFocusNode.hasFocus
+                          ? Colors.white
+                          : Color.fromARGB(255, 180, 169, 169),
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                controller: _idController,
+              ),
             ],
           ),
         ),
@@ -101,7 +126,16 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
             if (_formKey.currentState?.validate() ?? false) {
               // Handle profile detail change logic here
               // For now, just pop the dialog
-              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => profile(
+                    name: _nameController.text,
+                    studentNumber: _idController.text,
+                    password: _password,
+                  ),
+                ),
+              );
             }
           },
           child: Text('Change Detail'),
@@ -113,6 +147,8 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
   @override
   void dispose() {
     _detailController.dispose();
+    _nameFocusNode.dispose();
+    _idFocusNode.dispose();
     super.dispose();
   }
 }
