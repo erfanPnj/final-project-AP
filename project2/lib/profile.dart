@@ -1,5 +1,5 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
-
+import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -29,6 +29,19 @@ class _profileState extends State<profile> {
   String? _email;
   String? _studentNumber;
   String? _password;
+
+  File? _image;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -103,11 +116,42 @@ class _profileState extends State<profile> {
                         ],
                       ),
                     ),
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIKcTkARlljahDz7xR5gq-lwY3NSwsYMQdl_AlXfua4Yc2QcQ9QIG38gxtEiMGNAdoEck&usqp=CAU"),
-                      backgroundColor: Colors.white,
-                      radius: 80,
+                    Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: _image == null
+                              ? CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIKcTkARlljahDz7xR5gq-lwY3NSwsYMQdl_AlXfua4Yc2QcQ9QIG38gxtEiMGNAdoEck&usqp=CAU",
+                                  ),
+                                  radius: 80,
+                                  backgroundColor: Colors.grey[200],
+                                )
+                              : CircleAvatar(
+                                  radius: 80,
+                                  backgroundImage: FileImage(_image!),
+                                ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

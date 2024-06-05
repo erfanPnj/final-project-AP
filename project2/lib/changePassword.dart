@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:project2/Signup.dart';
-import 'package:project2/profile.dart';
 
 class ChangePassword extends StatefulWidget {
   ChangePassword({required this.password});

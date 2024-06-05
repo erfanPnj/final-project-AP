@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'Assignment.dart';
 import 'Course.dart';
 import 'Student.dart';

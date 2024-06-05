@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
 
 // class login extends StatefulWidget {
