@@ -30,7 +30,6 @@ class _SignupState extends State<Signup> {
   }
 
   RegExp regex = RegExp(r'^\d+$');
-  // RegExp reg1 = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*$');
   RegExp regex2 = RegExp(r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$');
   void signup() {
     if (widget.Password.text != (widget.confirmPassword.text)) {
@@ -151,15 +150,6 @@ class _SignupState extends State<Signup> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
-        // appBar: AppBar(
-        //   iconTheme: IconThemeData(color: Colors.blue.shade900),
-        //   backgroundColor: Colors.white,
-        //   leading: IconButton(
-        //       onPressed: () {
-        //         Navigator.pop(context);
-        //       },
-        //       icon: Icon(Icons.arrow_back_ios_new_sharp)),
-        // ),
         body: Expanded(
           child: SingleChildScrollView(
             child: Padding(
@@ -202,15 +192,6 @@ class _SignupState extends State<Signup> {
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  // Align(
-                  //     alignment: Alignment.centerLeft,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.only(left: 44),
-                  //       child: Text(
-                  //         "Email",
-                  //         style: TextStyle(fontSize: 15),
-                  //       ),
-                  //     )),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 20, 15),
                     child: TextField(
@@ -256,15 +237,6 @@ class _SignupState extends State<Signup> {
                           hintText: "Student number"),
                     ),
                   ),
-                  // Align(
-                  //     alignment: Alignment.centerLeft,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.fromLTRB(44, 10, 0, 0),
-                  //       child: Text(
-                  //         "Password",
-                  //         style: TextStyle(fontSize: 15),
-                  //       ),
-                  //     )),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 20, 15),
                     child: TextField(
@@ -344,10 +316,10 @@ class _SignupState extends State<Signup> {
                       width: 250,
                       child: ElevatedButton(
                           style: ButtonStyle(
-                            textStyle: MaterialStateProperty.all(
+                            textStyle: WidgetStateProperty.all(
                                 TextStyle(color: Colors.white)),
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.blue.shade900),
+                                WidgetStateProperty.all(Colors.blue.shade900),
                           ),
                           onPressed: signup,
                           child: Text(
