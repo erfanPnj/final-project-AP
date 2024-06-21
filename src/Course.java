@@ -29,7 +29,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return courseName + "-" + courseTeacher.getName() + "-" + countOfUnits + "-" + examDate + "-" + status;
+        return courseName + "~" + courseTeacher.getName() + "~" + countOfUnits + "~" + examDate + "~" + status;
     }
 
     public void setStudentList(List<Student> studentList) {

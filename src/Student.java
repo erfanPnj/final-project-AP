@@ -136,9 +136,9 @@ public class Student {
             if (c.getScores().containsKey(this)) { // check if there is a grade related to this student in course c
                 grade.append("/").append(c.getScores().get(this));
             }
-            coursesString.append("-").append(c.getCourseName()).append(grade);
+            coursesString.append("~").append(c.getCourseName()).append(grade);
         }
-        return name + "-" + studentId + "-" + password + coursesString; // Like: Erfan-4022-ap-ec
+        return name + "~" + studentId + "~" + password + coursesString; // Like: Erfan-4022-ap-ec
     }
 
     public String getPassword() {

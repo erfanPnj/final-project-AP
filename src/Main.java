@@ -90,7 +90,7 @@ public class Main {
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
             String[] parts;
-            parts = data.split("-");
+            parts = data.split("~");
             Teacher teacher = new Teacher(parts[0], parts[1], Integer.parseInt(parts[2]));
             list.add(teacher);
         }
@@ -105,7 +105,7 @@ public class Main {
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
             String[] parts;
-            parts = data.split("-");
+            parts = data.split("~");
 
             for (Teacher t : Faculty.getTeachers()) {
                 if (t.getName().equals(parts[1])) {
@@ -132,7 +132,7 @@ public class Main {
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
             String[] parts;
-            parts = data.split("-");
+            parts = data.split("~");
             Student student = new Student(parts[0], parts[1], parts[2]);
             if (parts.length >= 4) { // in case the student is not attended to any course, like Erfan-2222 (there is no parts[2])
                 for (int i = 3; i < parts.length; i++) {
@@ -169,7 +169,7 @@ public class Main {
         while (scanner.hasNextLine()) {
             String data = scanner.nextLine();
             String[] parts;
-            parts = data.split("-");
+            parts = data.split("~");
             if (parts[2].equals("true"))
                 list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true, parts[3]));
             else

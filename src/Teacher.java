@@ -20,7 +20,7 @@ public class Teacher {
             if (c.getCourseTeacher().getId().equals(this.id))
                 coursesString.append("-").append(c.getCourseName());
         }
-        return name + "-" + id + "-" + presentedCoursesCount + coursesString; // Like: Ali-1234-3
+        return name + "~" + id + "~" + presentedCoursesCount + coursesString; // Like: Ali-1234-3
     }
 
     public String getName() {
@@ -32,7 +32,7 @@ public class Teacher {
     }
 
     public void addCourseToThisTeacher (Course course) {
-        if (presentedCoursesCount == presentedCourses.size() - 1) {
+        if (presentedCoursesCount == presentedCourses.size()) {
             System.out.println("This teacher has reached to maximum course count!");
             return;
         }
