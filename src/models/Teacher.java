@@ -1,3 +1,5 @@
+package models;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class Teacher {
         StringBuilder coursesString = new StringBuilder();
         for (Course c : presentedCourses) {
             if (c.getCourseTeacher().getId().equals(this.id))
-                coursesString.append("-").append(c.getCourseName());
+                coursesString.append("~").append(c.getCourseName());
         }
         return name + "~" + id + "~" + presentedCoursesCount + coursesString; // Like: Ali-1234-3
     }

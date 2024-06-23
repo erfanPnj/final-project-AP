@@ -1,3 +1,5 @@
+package models;
+
 public class Assignment {
     private final String name;
     private int deadline; // it shows how many days left until deactivation.

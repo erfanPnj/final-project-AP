@@ -1,3 +1,5 @@
+package models;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +15,8 @@ public class Main {
         out.print("\033[H\033[2J");
         out.flush();
     } // which does not work in IDE's terminal!
+
+    static int userInput; // this variable is static to be accessible in server related classes
 
     // we need to delete data from .txt files after performing a removal activity:
     static void removeLineFromFile(String filePath, String... clue) throws IOException {
@@ -74,7 +78,7 @@ public class Main {
         out.println("11. Exit.");
     }
 
-    static void writeData(String data, String filePath) {
+    public static void writeData(String data, String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(data);
             writer.newLine();
@@ -84,7 +88,7 @@ public class Main {
     }
 
     static void loadTeacherData(List<Teacher> list) throws FileNotFoundException {
-        File file = new File("src/teachers.txt");
+        File file = new File("src/models/teachers.txt");
         Scanner scanner = new Scanner(file);
 
         while (scanner.hasNextLine()) {
@@ -99,7 +103,7 @@ public class Main {
     static void loadCourseData(List<Course> list) throws IOException {
         // we need teachers data first, so we load it right here:
         loadTeacherData(Faculty.getTeachers());
-        File file = new File("src/courses.txt");
+        File file = new File("src/models/courses.txt");
         Scanner scanner = new Scanner(file);
 
         while (scanner.hasNextLine()) {
@@ -115,8 +119,8 @@ public class Main {
                     } else {
                         list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), false));
                     }
-                    removeLineFromFile("src/teachers.txt", t.getId());
-                    writeData(t.toString(), "src/teachers.txt");
+                    removeLineFromFile("src/models/teachers.txt", t.getId());
+                    writeData(t.toString(), "src/models/teachers.txt");
                     break;
                 }
             }
@@ -126,7 +130,7 @@ public class Main {
     static void loadStudentData(List<Student> list) throws IOException {
         // we need courses data first, so we load it here and by doing this, we have also loaded teachers data!
         loadCourseData(Faculty.getCourses());
-        File file = new File("src/students.txt");
+        File file = new File("src/models/students.txt");
         Scanner scanner = new Scanner(file);
 
         while (scanner.hasNextLine()) {
@@ -163,7 +167,7 @@ public class Main {
     }
 
     static void loadAssignmentData(List<Assignment> list) throws FileNotFoundException {
-        File file = new File("src/assignments.txt");
+        File file = new File("src//models/assignments.txt");
         Scanner scanner = new Scanner(file);
 
         while (scanner.hasNextLine()) {
@@ -181,7 +185,7 @@ public class Main {
         String[] parts = studentData.split("-");
         Student student = new Student(parts[0], parts[1], parts[2]);
 
-        writeData(student.toString(), "src/students.txt");
+        writeData(student.toString(), "src/models/students.txt");
         Faculty.getStudents().add(student);
     }
 
@@ -226,7 +230,7 @@ public class Main {
         out.println("Welcome to DaneshjooYar!\nPlease choose your roll:\n1. Teacher\n2. Admin");
         Scanner scanner = new Scanner(in);
 
-        int userInput = scanner.nextInt();
+        userInput = scanner.nextInt();
 
         switch (userInput) {
             case 1: {
@@ -305,12 +309,12 @@ public class Main {
                             int isAlreadyWritten = 0;
                             for (Student s : Faculty.getStudents()) {
                                 if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
-                                    removeLineFromFile("src/students.txt", studentId); // remove the previous data
+                                    removeLineFromFile("src/models/students.txt", studentId); // remove the previous data
                                     for (Course c : Faculty.getCourses()) {
                                         if (c.getCourseName().equals(courseName)) {
                                             isAlreadyWritten = 1; // we found the target
                                             s.addCourseAndUnit(c);
-                                            writeData(s.toString(), "src/students.txt"); // write the updated data to file
+                                            writeData(s.toString(), "src/models/students.txt"); // write the updated data to file
                                             out.println("Done!");
                                             break;
                                         }
@@ -325,7 +329,7 @@ public class Main {
                                 for (Course c : Faculty.getCourses()) {
                                     if (c.getCourseName().equals(courseName)) {
                                         c.addStudent(student);
-                                        writeData(student.toString(), "src/students.txt"); // save the student to students.txt
+                                        writeData(student.toString(), "src/models/students.txt"); // save the student to students.txt
                                         out.println("Done!");
                                         break;
                                     }
@@ -354,11 +358,11 @@ public class Main {
 
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseName().equals(courseName) && c.getCourseTeacher().getId().equals(teacherId)) {
-                                    removeLineFromFile("src/students.txt", studentId, studentName);
+                                    removeLineFromFile("src/models/students.txt", studentId, studentName);
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
                                             c.eliminateStudent(s);
-                                            writeData(s.toString(), "src/students.txt");
+                                            writeData(s.toString(), "src/models/students.txt");
                                         }
                                     }
                                     break;
@@ -389,7 +393,7 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
                                     Assignment assignment = new Assignment(assignmentName, deadline, true, courseName);
-                                    writeData(assignment.toString(), "src/assignments.txt");
+                                    writeData(assignment.toString(), "src/models/assignments.txt");
                                     c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, deadline);
                                     break;
                                 }
@@ -414,7 +418,7 @@ public class Main {
 
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
-                                    removeLineFromFile("src/assignments.txt", assignmentName, courseName);
+                                    removeLineFromFile("src/models/assignments.txt", assignmentName, courseName);
                                     c.getCourseTeacher().deleteAnAssignment(c.getCourseName(), assignmentName);
                                     break;
                                 }
@@ -444,11 +448,11 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
                                     c.getCourseTeacher().rateStudents(c.getCourseName(), studentId, grade);
-                                    removeLineFromFile("src/students.txt", studentId); // remove previous data
+                                    removeLineFromFile("src/models/students.txt", studentId); // remove previous data
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
                                             // write the updated data to the file
-                                            writeData(s.toString(), "src/students.txt");
+                                            writeData(s.toString(), "src/models/students.txt");
                                         }
                                     }
                                     break;
@@ -480,8 +484,8 @@ public class Main {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
                                     c.getCourseTeacher().changeAssignmentDeadline(assignmentName, newDeadline);
                                     Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseName);
-                                    removeLineFromFile("src/assignments.txt", courseName, assignmentName);
-                                    writeData(assignment.toString(), "src/assignments.txt");
+                                    removeLineFromFile("src/models/assignments.txt", courseName, assignmentName);
+                                    writeData(assignment.toString(), "src/models/assignments.txt");
                                     break;
                                 }
                             }
@@ -527,14 +531,14 @@ public class Main {
                                 course = new Course(courseName, teacher,
                                         countOfUnits, examDate, Faculty.getSemester(), true);
 
-                                writeData(course.toString(), "src/courses.txt");
+                                writeData(course.toString(), "src/models/courses.txt");
                             }
 
-                            writeData(teacher.toString(), "src/teachers.txt");
+                            writeData(teacher.toString(), "src/models/teachers.txt");
                         }
                         break;
                         case 2: {
-                            File file = new File("src/courses.txt");
+                            File file = new File("src/models/courses.txt");
 
                             if (file.length() == 0) {
                                 out.println("Oops! there isn't any defined course, first define a course so you can \n" +
@@ -563,7 +567,7 @@ public class Main {
                                         if (t.getName().equals(teacherName)) {
                                             course = new Course(courseName, t, userInput, courseExamDate, Faculty.getSemester(), true);
                                             t.addCourseToThisTeacher(course);
-                                            writeData(course.toString(), "src/courses.txt");
+                                            writeData(course.toString(), "src/models/courses.txt");
                                             break;
                                         }
                                     }
@@ -586,12 +590,12 @@ public class Main {
                                 Student student = new Student(studentName, studentId, "@" + studentId);
                                 for (Student s : Faculty.getStudents()) {
                                     if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
-                                        removeLineFromFile("src/students.txt", studentId); // remove the previous data
+                                        removeLineFromFile("src/models/students.txt", studentId); // remove the previous data
                                         for (Course c : Faculty.getCourses()) {
                                             if (c.getCourseName().equals(courseName)) {
                                                 isAlreadyWritten = 1; // we found the target
                                                 s.addCourseAndUnit(c);
-                                                writeData(s.toString(), "src/students.txt"); // write the updated data to file
+                                                writeData(s.toString(), "src/models/students.txt"); // write the updated data to file
                                                 out.println("Done!");
                                                 break;
                                             }
@@ -605,7 +609,7 @@ public class Main {
                                     for (Course c : Faculty.getCourses()) {
                                         if (c.getCourseName().equals(courseName)) {
                                             c.addStudent(student);
-                                            writeData(student.toString(), "src/students.txt"); // save the student to students.txt
+                                            writeData(student.toString(), "src/models/students.txt"); // save the student to students.txt
                                             out.println("Done!");
                                             break;
                                         }
@@ -633,8 +637,8 @@ public class Main {
                                     for (Student s : c.getStudentList()) {
                                         if (s.equals(new Student(studentName, studentId, studentPassword))) {
                                             c.eliminateStudent(s);
-                                            removeLineFromFile("src/students.txt", studentId); // delete the old data
-                                            writeData(s.toString(), "src/students.txt"); // write the updated data
+                                            removeLineFromFile("src/models/students.txt", studentId); // delete the old data
+                                            writeData(s.toString(), "src/models/students.txt"); // write the updated data
                                             out.println("Done eliminating student!");
                                             break;
                                         }
@@ -650,7 +654,7 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseName().equals(courseName)) {
                                     Faculty.getCourses().remove(c);
-                                    removeLineFromFile("src/courses.txt", courseName);
+                                    removeLineFromFile("src/models/courses.txt", courseName);
                                     break;
                                 }
                             }
@@ -669,7 +673,7 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseName().equals(courseName)) {
                                     c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, assignmentDeadline);
-                                    writeData(c.getActiveProjects().getLast().toString(), "src/assignments.txt");
+                                    writeData(c.getActiveProjects().getLast().toString(), "src/models/assignments.txt");
                                     break;
                                 }
                             }
@@ -688,7 +692,7 @@ public class Main {
                                     break;
                                 }
                             }
-                            removeLineFromFile("src/assignments.txt", assignmentName); // assignment is removed from file
+                            removeLineFromFile("src/models/assignments.txt", assignmentName); // assignment is removed from file
                             out.println("Your desired assignment has been successfully deleted.");
                         }
                         break;
@@ -708,8 +712,8 @@ public class Main {
                                         Scanner scanner3 = new Scanner(in);
                                         int newDeadline = scanner3.nextInt();
                                         a.setDeadline(newDeadline);
-                                        removeLineFromFile("src/assignments.txt", assignmentName, courseName);
-                                        writeData(a.toString(), "src/assignments.txt");
+                                        removeLineFromFile("src/models/assignments.txt", assignmentName, courseName);
+                                        writeData(a.toString(), "src/models/assignments.txt");
                                     }
                                     break;
                                 }
@@ -730,11 +734,11 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseName().equalsIgnoreCase(courseName)) {
                                     c.getCourseTeacher().rateStudents(c.getCourseName(), studentId, grade);
-                                    removeLineFromFile("src/students.txt", studentId); // remove previous data
+                                    removeLineFromFile("src/models/students.txt", studentId); // remove previous data
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
                                             // write the updated data to the file
-                                            writeData(s.toString(), "src/students.txt");
+                                            writeData(s.toString(), "src/models/students.txt");
                                         }
                                     }
                                     break;
