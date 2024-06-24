@@ -34,120 +34,8 @@ class _SignupState extends State<Signup> {
 
   RegExp regex = RegExp(r'^\d+$');
   RegExp regex2 = RegExp(r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$');
-  // void signup() {
-  //   if (widget.Password.text != (widget.confirmPassword.text)) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //               "Error",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             content: Text(
-  //               "Please enter the passwords correctly!",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             backgroundColor: Colors.blue.shade900,
-  //             actions: [
-  //               ElevatedButton(
-  //                   onPressed: Navigator.of(context).pop, child: Text("Ok"))
-  //             ],
-  //           );
-  //         });
-  //   } else if (!regex.hasMatch(widget.Studentnumber.text)) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //               "Error",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             content: Text(
-  //               "Student number should only contains numbers!",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             backgroundColor: Colors.blue.shade900,
-  //             actions: [
-  //               ElevatedButton(
-  //                   onPressed: Navigator.of(context).pop, child: Text("Ok"))
-  //             ],
-  //           );
-  //         });
-  //   } else if (widget.Password.text.length < 8) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //               "Error",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             content: Text(
-  //               "Your password is too short!",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             backgroundColor: Colors.blue.shade900,
-  //             actions: [
-  //               ElevatedButton(
-  //                   onPressed: Navigator.of(context).pop, child: Text("Ok"))
-  //             ],
-  //           );
-  //         });
-  //   } else if (widget.Password.text.contains(widget.Name.text)) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //               "Error",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             content: Text(
-  //               "Your password should not contains your name!",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             backgroundColor: Colors.blue.shade900,
-  //             actions: [
-  //               ElevatedButton(
-  //                   onPressed: Navigator.of(context).pop, child: Text("Ok"))
-  //             ],
-  //           );
-  //         });
-  //   } else if (!regex2.hasMatch(widget.Password.text)) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //               "Error",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             content: Text(
-  //               "Your password should contain at least one capital and one small letter and one number!",
-  //               style: TextStyle(color: Colors.white),
-  //             ),
-  //             backgroundColor: Colors.blue.shade900,
-  //             actions: [
-  //               ElevatedButton(
-  //                   onPressed: Navigator.of(context).pop, child: Text("Ok"))
-  //             ],
-  //           );
-  //         });
-  //   } else {
-  //     Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => profile(
-  //                 name: widget.Name.text,
-  //                 studentNumber: widget.Studentnumber.text,
-  //                 password: widget.Password.text)));
-  //   }
-  // }
-
   Future<String> signup() async {
-    await Socket.connect('YOUR IP ADDRESS HERE', 8080).then((serverSocket) {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
       print('............Connected to server on port 8080...........');
 
       if (widget.Password.text != widget.confirmPassword.text) {
@@ -187,11 +75,7 @@ class _SignupState extends State<Signup> {
             _showErrorDialog('This student ID is for another student!');
           }
         });
-
-        // Close the socket
-        
       }
-      //ServerSocket.close();
     });
     return response;
   }

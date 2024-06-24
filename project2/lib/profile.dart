@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:project2/Signup.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class profile extends StatefulWidget {
   profile(
@@ -29,16 +31,16 @@ class _profileState extends State<profile> {
 
   File? _image;
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  // Future<void> _pickImage() async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _image = File(pickedFile.path);
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {
@@ -46,6 +48,46 @@ class _profileState extends State<profile> {
     _name = widget.name;
     _studentId = widget.studentNumber;
     _password = widget.password;
+    _loadProfileImage();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final savedImage = await saveImage(File(pickedFile.path), _studentId!);
+      await saveImagePath(_studentId!, savedImage.path);
+      setState(() {
+        _image = savedImage;
+      });
+    }
+  }
+
+  Future<File> saveImage(File image, String studentNumber) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final imagePath = '${directory.path}/$studentNumber.png';
+    final savedImage = await image.copy(imagePath);
+    return savedImage;
+  }
+
+  Future<void> saveImagePath(String studentNumber, String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(studentNumber, path);
+  }
+
+  Future<String?> getImagePath(String studentNumber) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(studentNumber);
+  }
+
+  Future<void> _loadProfileImage() async {
+    final imagePath = await getImagePath(_studentId!);
+    if (imagePath != null) {
+      setState(() {
+        _image = File(imagePath);
+      });
+    }
   }
 
   void showChangePasswordDialog(BuildContext context) {
