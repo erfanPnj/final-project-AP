@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,7 +17,7 @@ class ClientHandler extends Thread {
     Socket socket;
     DataOutputStream dos;
     DataInputStream dis;
-    List<String> loggedInUsers ;
+    List<String> loggedInUsers= new ArrayList<>(); // it stores student id of logged in students
 
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
@@ -72,52 +73,62 @@ class ClientHandler extends Thread {
 //        for (String s : split)
 //            System.out.println(s);
         switch (split[0]) {
-//            case "GET: logInChecker": {    //GET: logInChecker~402243056~MN45o9
-//                // 2 -> both user ID & password is correct so allow signing in
-//                // 1 -> user ID is correct but password is incorrect
-//                // 0 -> user ID is incorrect
-//                boolean signedIn = false;
-//                int responseOfDatabase = 100;
-//                try {
-//                    responseOfDatabase = DataBase.usersChecker(split[1], split[2]);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                if (responseOfDatabase == 2) {
-//                    signedIn = true;
-//                    System.out.println("status code is 200");
-//                    System.out.println("Successfully logged in!");
-//                    try {
-//                        writer("200");
-//                        loggedInUsers.add(split[1]);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//                else if (responseOfDatabase == 1) {
-//                    signedIn = false;
-//                    System.out.println("status code is 401");
-//                    System.out.println("Password is incorrect!");
-//                    try {
-//                        writer("401");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//                else if (responseOfDatabase == 0) {
-//                    signedIn = false;
-//                    System.out.println("status code is 404");
-//                    System.out.println("User not founded!");
-//                    try {
-//                        writer("404");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-//            }
+            case "logIn": {    //GET: logInChecker~402243056~MN45o9
+                // 2 -> both user ID & password is correct so allow signing in
+                // 1 -> user ID is correct but password is incorrect
+                // 0 -> user ID is incorrect
+                // first we need to verify if there is a student with this student id
+                int responseOfDatabase = 100;
+                boolean isAMatchFound = false;
+                String studentName = "";
+                for (Student student : Faculty.getStudents()) {
+                    if (student.getId().equals(split[1])) {
+                        isAMatchFound = true;
+                        studentName = student.getName();
+                        if (student.getPassword().equals(split[2])) {
+                            responseOfDatabase = 2;
+                        } else {
+                            responseOfDatabase = 1;
+                        }
+                    }
+                }
+
+                if (!isAMatchFound) {
+                    responseOfDatabase = 0;
+                }
+
+                if (responseOfDatabase == 2) {
+                    //signedIn = true;
+                    System.out.println("status code is 200");
+                    System.out.println("Successfully logged in!");
+                    try {
+                        writer("200~" + studentName);
+                        loggedInUsers.add(split[1]);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (responseOfDatabase == 1) {
+                    //signedIn = false;
+                    System.out.println("status code is 401");
+                    System.out.println("Password is incorrect!");
+                    try {
+                        writer("401~" + studentName);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (responseOfDatabase == 0) {
+                    //signedIn = false;
+                    System.out.println("status code is 404");
+                    System.out.println("User not founded!");
+                    try {
+                        writer("404~");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println(loggedInUsers.size());
+                break;
+            }
             case "signUp": {
                 // checks the userName if it's taken, the response is zero and usr is not added
                 boolean duplicate = false;

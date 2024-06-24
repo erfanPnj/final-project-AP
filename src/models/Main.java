@@ -87,7 +87,7 @@ public class Main {
         }
     }
 
-    static void loadTeacherData(List<Teacher> list) throws FileNotFoundException {
+    public static void loadTeacherData(List<Teacher> list) throws FileNotFoundException {
         File file = new File("src/models/teachers.txt");
         Scanner scanner = new Scanner(file);
 
@@ -100,7 +100,7 @@ public class Main {
         }
     }
 
-    static void loadCourseData(List<Course> list) throws IOException {
+    public static void loadCourseData(List<Course> list) throws IOException {
         // we need teachers data first, so we load it right here:
         loadTeacherData(Faculty.getTeachers());
         File file = new File("src/models/courses.txt");
@@ -127,7 +127,7 @@ public class Main {
         }
     }
 
-    static void loadStudentData(List<Student> list) throws IOException {
+    public static void loadStudentData(List<Student> list) throws IOException {
         // we need courses data first, so we load it here and by doing this, we have also loaded teachers data!
         loadCourseData(Faculty.getCourses());
         File file = new File("src/models/students.txt");
@@ -166,7 +166,7 @@ public class Main {
         }
     }
 
-    static void loadAssignmentData(List<Assignment> list) throws FileNotFoundException {
+    public static void loadAssignmentData(List<Assignment> list) throws FileNotFoundException {
         File file = new File("src//models/assignments.txt");
         Scanner scanner = new Scanner(file);
 
@@ -221,12 +221,6 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        new Faculty("computerEngineering", 2);
-
-        // After each launch of the program, we need to load the data from text files:
-        loadStudentData(Faculty.getStudents()); // also loads teachers data and courses data
-        loadAssignmentData(Faculty.getAssignments());
-
         out.println("Welcome to DaneshjooYar!\nPlease choose your roll:\n1. Teacher\n2. Admin");
         Scanner scanner = new Scanner(in);
 
