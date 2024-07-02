@@ -153,9 +153,9 @@ class _LogInState extends State<login> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     textStyle:
-                        WidgetStateProperty.all(TextStyle(color: Colors.white)),
+                        MaterialStateProperty.all(TextStyle(color: Colors.white)),
                     backgroundColor:
-                        WidgetStateProperty.all(Colors.blue.shade900),
+                       MaterialStateProperty.all(Colors.blue.shade900),
                   ),
                   onPressed: login,
                   child: Text(

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:project2/HomePage.dart';
+import 'package:project2/ToDo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: ToDo(),
     );
   }
 }
