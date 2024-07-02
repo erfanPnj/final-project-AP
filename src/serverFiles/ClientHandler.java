@@ -1,6 +1,7 @@
 package serverFiles;
 
 
+import models.Course;
 import models.Faculty;
 import models.Main;
 import models.Student;
@@ -70,8 +71,7 @@ class ClientHandler extends Thread {
             throw new RuntimeException(e);
         }
         String[] split = command.split("~");
-//        for (String s : split)
-//            System.out.println(s);
+
         switch (split[0]) {
             case "logIn": {    //GET: logInChecker~402243056~MN45o9
                 // 2 -> both user ID & password is correct so allow signing in
@@ -130,6 +130,8 @@ class ClientHandler extends Thread {
                 break;
             }
             case "signUp": {
+                for (String s : split)
+                    System.out.println(s);
                 // checks the userName if it's taken, the response is zero and usr is not added
                 boolean duplicate = false;
                 String userName = split[2];
@@ -156,6 +158,28 @@ class ClientHandler extends Thread {
                 }
                 break;
             }
+            case "deleteAccount": {
+                for (String s : split)
+                    System.out.println(s);
+                try {
+                    // first, clear the database from the deleted account so that it isn't loaded
+                    // next time we run the application
+                    Main.removeLineFromFile("src/models/students.txt", split[2]);
+                    // then delete the student from courses and current student list
+                    for (Student student: Faculty.getStudents()) {
+                        if (student.getId().equals(split[2])) {
+                            Faculty.getStudents().remove(student);
+                            break;
+                        }
+                    }
+                    for (Course course: Faculty.getCourses()) {
+                        course.getStudentList().remove(new Student(split[1], split[2], split[3]));
+                    }
+                    writer("200");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }break;
 //            case "GET: userInfo" : {
 //                if (loggedInUsers.contains(split[1])){
 //                    try {

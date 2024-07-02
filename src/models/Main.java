@@ -19,7 +19,7 @@ public class Main {
     static int userInput; // this variable is static to be accessible in server related classes
 
     // we need to delete data from .txt files after performing a removal activity:
-    static void removeLineFromFile(String filePath, String... clue) throws IOException {
+    public static void removeLineFromFile(String filePath, String... clue) throws IOException {
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
         String lineToRemove = "";
@@ -51,6 +51,7 @@ public class Main {
 
         // Write the updated lines back to the file
         Files.write(path, updatedLines);
+        out.println("DONE!");
     }
 
     static void showTeacherMenu() {
