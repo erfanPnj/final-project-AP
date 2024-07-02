@@ -272,10 +272,10 @@ class _SignupState extends State<Signup> {
                         width: 250,
                         child: ElevatedButton(
                             style: ButtonStyle(
-                              textStyle: WidgetStateProperty.all(
+                              textStyle: MaterialStateProperty.all(
                                   TextStyle(color: Colors.white)),
                               backgroundColor:
-                                  WidgetStateProperty.all(Colors.blue.shade900),
+                                  MaterialStateProperty.all(Colors.blue.shade900),
                             ),
                             onPressed: signup,
                             child: Text(

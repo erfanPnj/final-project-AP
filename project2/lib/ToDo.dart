@@ -17,6 +17,7 @@ class ToDo extends StatefulWidget {
 Map<String, String> tasks = new Map();
 
 var a = <String>{};
+var page = 1;
 DateTime now = DateTime.now();
 DateTime x = DateTime(now.year, now.month, now.day);
 
@@ -119,6 +120,43 @@ class _ToDoState extends State<ToDo> {
               ],
             ),
           ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        page = 1;
+                      });
+                    },
+                    child: Text(
+                      'All tasks',
+                      style: TextStyle(color: Colors.blue.shade900),
+                    )),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        page = 2;
+                      });
+                    },
+                    child: Text(
+                      'Done tasks',
+                      style: TextStyle(color: Colors.blue.shade900),
+                    )),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        page = 3;
+                      });
+                    },
+                    child: Text(
+                      'Undone tasks',
+                      style: TextStyle(color: Colors.blue.shade900),
+                    )),
+              ],
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: a.toList().length,
@@ -128,6 +166,7 @@ class _ToDoState extends State<ToDo> {
                   child: GestureDetector(
                     onLongPress: () {
                       setState(() {
+                        tasks.remove(tasks.keys.toList()[index]);
                         a.remove(a.toList()[index]);
                         expanded.removeAt(index);
                       });

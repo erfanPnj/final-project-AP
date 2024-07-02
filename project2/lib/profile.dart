@@ -257,7 +257,7 @@ class _profileState extends State<profile> {
                   ),
                   style: ButtonStyle(
                       backgroundColor:
-                          WidgetStatePropertyAll(Colors.blue.shade900)),
+                          MaterialStatePropertyAll(Colors.blue.shade900)),
                 ),
               ),
               Padding(
@@ -277,7 +277,7 @@ class _profileState extends State<profile> {
                     ),
                     style: ButtonStyle(
                         backgroundColor:
-                            WidgetStatePropertyAll(Colors.blue.shade900)),
+                            MaterialStatePropertyAll(Colors.blue.shade900)),
                   ),
                 ),
               )
