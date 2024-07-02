@@ -178,7 +178,7 @@ class _ToDoState extends State<ToDo> {
                     },
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 300),
-                      height: 80,
+                      height: 90,
                       decoration: BoxDecoration(
                           // Add your decoration properties here
                           // color: expanded[index]

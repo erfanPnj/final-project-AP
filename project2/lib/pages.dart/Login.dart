@@ -152,10 +152,10 @@ class _LogInState extends State<login> {
                 width: 250,
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    textStyle:
-                        MaterialStateProperty.all(TextStyle(color: Colors.white)),
+                    textStyle: MaterialStateProperty.all(
+                        TextStyle(color: Colors.white)),
                     backgroundColor:
-                       MaterialStateProperty.all(Colors.blue.shade900),
+                        MaterialStateProperty.all(Colors.blue.shade900),
                   ),
                   onPressed: login,
                   child: Text(
@@ -173,8 +173,12 @@ class _LogInState extends State<login> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Signup()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Signup(),
+                      ),
+                    );
                   },
                   child: Text(
                     "SIGN UP!",

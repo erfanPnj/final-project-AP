@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:project2/Signup.dart';
+import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
@@ -112,6 +113,77 @@ class _profileState extends State<profile> {
     );
   }
 
+  void deleteAccount() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      print('............Connected to server on port 8080...........');
+
+      serverSocket.write(
+          'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
+      serverSocket.flush();
+      serverSocket.listen((event) {
+        String response = String.fromCharCode(event as int);
+        if (true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Signup(),
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  Future<void> showDeleteAccDialog() async {
+    Widget delete = TextButton(
+      onPressed: () async {
+        await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+          print('............Connected to server on port 8080...........');
+
+          serverSocket.write(
+              'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
+          serverSocket.flush();
+          serverSocket.listen(
+            (event) {
+              String response = String.fromCharCodes(event);
+              if (response == '200') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Signup(),
+                  ),
+                );
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+            },
+          );
+        });
+      },
+      child: Text('DELETE'),
+    );
+    Widget cancel = TextButton(
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      child: Text('cancel'),
+    );
+    AlertDialog alertDialog = AlertDialog(
+      title: Text('ATTENTION!'),
+      content: Text(
+          'this action will permanently delete your account and is not reversible!'),
+      actions: [
+        cancel,
+        delete,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (build) {
+        return alertDialog;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -132,13 +204,21 @@ class _profileState extends State<profile> {
                         padding: const EdgeInsets.fromLTRB(10, 25, 0, 10),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.home,
-                              color: Colors.white,
-                              size: 30,
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (builder) => ToDo(),
+                                    ));
+                              }, icon: Icon(
+                                Icons.task,
+                                size: 30,
+                                color: Colors.white,
+                              ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 290),
+                              padding: const EdgeInsets.only(left: 270),
                               child: IconButton(
                                   onPressed: () {
                                     Navigator.push(
@@ -278,6 +358,28 @@ class _profileState extends State<profile> {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStatePropertyAll(Colors.blue.shade900)),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  height: 50,
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDeleteAccDialog();
+                    },
+                    child: Text(
+                      "Delete account",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(Colors.blue.shade900),
+                    ),
                   ),
                 ),
               )
