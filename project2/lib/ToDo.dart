@@ -1,11 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:ffi';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 class ToDo extends StatefulWidget {
   const ToDo({super.key});
@@ -178,7 +173,7 @@ class _ToDoState extends State<ToDo> {
                     },
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 300),
-                      height: 80,
+                      height: 90,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
