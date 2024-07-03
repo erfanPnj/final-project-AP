@@ -180,10 +180,6 @@ class _ToDoState extends State<ToDo> {
                       duration: Duration(milliseconds: 300),
                       height: 80,
                       decoration: BoxDecoration(
-                          // Add your decoration properties here
-                          // color: expanded[index]
-                          //     ? Colors.green.shade500
-                          //     : Colors.red.shade500,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                               color: Colors.blue.shade900, width: 2)),
