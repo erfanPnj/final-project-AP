@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Student {
     private final String name;
     private final String studentId;
-    private final String password;
+    private String password;
     private int countOfCourses;
     private int countOfUnits;
     private final List<Course> courses = new ArrayList<>();
@@ -145,5 +145,9 @@ public class Student {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword (String password) {
+        this.password = password;
     }
 }

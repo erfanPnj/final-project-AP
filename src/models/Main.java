@@ -221,6 +221,20 @@ public class Main {
         return isThisYourCourse;
     }
 
+    public static List<String> sendStudentDataToChangePassword (String studentId) throws IOException {
+        File file = new File("src/models/students.txt");
+        Scanner scanner = new Scanner(file);
+        List<String> parts = new ArrayList<>();
+
+        while (scanner.hasNextLine()) {
+            String previouslyReadLine = scanner.nextLine();
+            if (previouslyReadLine.contains(studentId)) {
+                parts = List.of(previouslyReadLine.split("~"));
+            }
+        }
+        return parts;
+    }
+
     public static void main(String[] args) throws IOException {
         out.println("Welcome to DaneshjooYar!\nPlease choose your roll:\n1. Teacher\n2. Admin");
         Scanner scanner = new Scanner(in);

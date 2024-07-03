@@ -180,6 +180,39 @@ class ClientHandler extends Thread {
                     throw new RuntimeException(e);
                 }
             }break;
+            case "changePass": {
+                try {
+                    StringBuilder courses = new StringBuilder();
+                    List<String> studentData = Main.sendStudentDataToChangePassword(split[1]);
+                    for (String s: studentData) {
+                        if (s.contains("/")) {
+                            courses.append("~").append(s);
+                        }
+                    }
+                    // create a new line after replacing the old password with a new one
+                    // create and write changed info
+                    String modifiedData = "";
+                    if (studentData.getLast().contains("/")){
+                        modifiedData = studentData.getFirst() + "~" + split[1] + "~" +
+                                split[2] + courses;
+                    } else {
+                        modifiedData = studentData.getFirst() + "~" + split[1] + "~" +
+                                split[2];
+                    }
+                    System.out.println(modifiedData);
+                    Main.removeLineFromFile("src/models/students.txt", split[1]);
+                    Main.writeData(modifiedData, "src/models/students.txt");
+                    // we also have to update the data in Faculty's student array list
+                    for (Student student: Faculty.getStudents()) {
+                        if (student.getId().equals(split[1])) {
+                            student.setPassword(split[2]);
+                        }
+                    }
+                    writer("200");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            }
 //            case "GET: userInfo" : {
 //                if (loggedInUsers.contains(split[1])){
 //                    try {
