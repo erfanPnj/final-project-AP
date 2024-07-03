@@ -95,7 +95,7 @@ class _profileState extends State<profile> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ChangePassword(password: _password);
+        return ChangePassword(password: _password, studentId : _studentId, name: _name,);
       },
     );
   }
