@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
+import 'package:project2/navigation.dart';
 import 'package:project2/profile.dart';
 
 class login extends StatefulWidget {
@@ -20,6 +21,7 @@ class login extends StatefulWidget {
 class _LogInState extends State<login> {
   bool userIDChecker = true, passwordChecker = true;
   String response = '';
+  late List<String> proccessedResponse = [];
 
   @override
   void initState() {
@@ -35,13 +37,13 @@ class _LogInState extends State<login> {
       serverSocket.flush();
       serverSocket.listen((event) {
         response = String.fromCharCodes(event);
-        List<String> proccessedResponse = splitor(response);
+        proccessedResponse = splitor(response);
 
         if (proccessedResponse[0] == '200') {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => profile(
+              builder: (context) => Navigation(
                 name: proccessedResponse[1],
                 studentNumber: widget.studentIdController.text,
                 password: widget.passwordController.text,
@@ -98,12 +100,21 @@ class _LogInState extends State<login> {
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.blue.shade900),
           backgroundColor: Colors.white,
-          leading: IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              },
-              icon: Icon(Icons.arrow_back_ios_new_sharp)),
+          // leading: IconButton(
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => HomePage(
+          //           name: proccessedResponse[1],
+          //           studentNumber: widget.studentIdController.text,
+          //           password: widget.passwordController.text,
+          //         ),
+          //       ),
+          //     );
+          //   },
+          //   icon: Icon(Icons.arrow_back_ios_new_sharp),
+          // ),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -157,7 +168,9 @@ class _LogInState extends State<login> {
                     backgroundColor:
                         MaterialStateProperty.all(Colors.blue.shade900),
                   ),
-                  onPressed: login,
+                  onPressed: () {
+                    login();
+                  },
                   child: Text(
                     "Login",
                     style: TextStyle(color: Colors.white),

@@ -4,24 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:project2/Classes.dart';
 import 'package:project2/ToDo.dart';
 import 'package:project2/pages.dart/Login.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:project2/profile.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  HomePage(
+      {super.key,
+      required this.name,
+      required this.studentNumber,
+      required this.password});
+
+  String? name;
+  String? studentNumber;
+  String? password;
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(debugShowCheckedModeBanner: false, home: Home());
+  // }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Home());
-  }
+  State<HomePage> createState() => _HomeState();
 }
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class _HomeState extends State<HomePage> {
+  String? name;
+  String? studentNumber;
+  String? password;
 
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
   // int _selectedIndex = 0;
 
   // List<Widget> pages = [Classes(), ToDo(), Classes(), ToDo(), ToDo()];
@@ -31,6 +41,20 @@ class _HomeState extends State<Home> {
   //     _selectedIndex = index;
   //   });
   // }
+
+  @override
+  void initState() {
+    super.initState();
+    name = widget.name;
+    studentNumber = widget.studentNumber;
+    password = widget.password;
+    print(name);
+    print('\n');
+    print(studentNumber);
+    print('\n');
+    print(password);
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +101,24 @@ class _HomeState extends State<Home> {
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => profile(
+                      name: name,
+                      studentNumber: studentNumber,
+                      password: password),
+                ),
+              );
+            },
+            icon: Icon(
+              Ionicons.person_outline,
+              color: Colors.white,
+            ),
+            alignment: Alignment.topRight,
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -85,7 +127,7 @@ class _HomeState extends State<Home> {
               },
               icon: Icon(Icons.login),
               color: Colors.white,
-            )
+            ),
           ],
         ),
       ),

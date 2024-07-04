@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.2.3
   toastification: ^2.0.0
   fluttertoast: ^8.2.6
+  ionicons: ^0.2.2
 
   
 dev_dependencies:

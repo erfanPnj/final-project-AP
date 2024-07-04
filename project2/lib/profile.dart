@@ -8,6 +8,7 @@ import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project2/pages.dart/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class profile extends StatefulWidget {
@@ -229,7 +230,7 @@ class _profileState extends State<profile> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Signup()));
+                                            builder: (context) => login()));
                                   },
                                   icon: Icon(
                                     Icons.logout,
