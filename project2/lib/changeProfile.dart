@@ -1,7 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project2/profile.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ChangeProfileDetails extends StatefulWidget {
   ChangeProfileDetails({
@@ -28,6 +32,34 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
   final TextEditingController _detailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  void ChangeProfileDetails() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      print('............Connected to server on port 8080...........');
+      serverSocket.write(
+          'changeProfile~${widget.id}~${_nameController.text}\u0000');
+      serverSocket.flush();
+      serverSocket.listen((event) {
+        String response = String.fromCharCodes(event);
+        if (response == '200') {
+          showToast(context, 'Your name has successfully changed!');
+        } else {
+          showToast(context, 'Failed to change name. Please try again.');
+        }
+      });
+    });
+  }
+
+  void showToast(BuildContext context, String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue.shade900,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +72,8 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
     _idFocusNode.addListener(() {
       setState(() {});
     });
+
+    
   }
 
   Color gray = Color.fromARGB(255, 180, 169, 169);
@@ -124,8 +158,7 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState?.validate() ?? false) {
-              // Handle profile detail change logic here
-              // For now, just pop the dialog
+              ChangeProfileDetails();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -143,7 +176,7 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
       ],
     );
   }
-
+  
   @override
   void dispose() {
     _detailController.dispose();

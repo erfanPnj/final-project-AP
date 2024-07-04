@@ -95,7 +95,11 @@ class _profileState extends State<profile> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ChangePassword(password: _password, studentId : _studentId, name: _name,);
+        return ChangePassword(
+          password: _password,
+          studentId: _studentId,
+          name: _name,
+        );
       },
     );
   }
@@ -211,7 +215,8 @@ class _profileState extends State<profile> {
                                     MaterialPageRoute(
                                       builder: (builder) => ToDo(),
                                     ));
-                              }, icon: Icon(
+                              },
+                              icon: Icon(
                                 Icons.task,
                                 size: 30,
                                 color: Colors.white,
