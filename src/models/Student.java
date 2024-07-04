@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Student {
-    private final String name;
+    private String name;
     private final String studentId;
     private String password;
     private int countOfCourses;
@@ -150,4 +150,9 @@ public class Student {
     public void setPassword (String password) {
         this.password = password;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

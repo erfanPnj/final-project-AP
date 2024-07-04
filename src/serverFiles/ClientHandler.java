@@ -1,11 +1,8 @@
 package serverFiles;
-
-
 import models.Course;
 import models.Faculty;
 import models.Main;
 import models.Student;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -206,6 +203,40 @@ class ClientHandler extends Thread {
                     for (Student student: Faculty.getStudents()) {
                         if (student.getId().equals(split[1])) {
                             student.setPassword(split[2]);
+                        }
+                    }
+                    writer("200");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            }
+            case "changeProfile": {
+                try {
+                    System.out.println(split[1]);
+                    StringBuilder courses = new StringBuilder();
+                    List<String> studentData = Main.sendStudentDataToChangePassword(split[1]);
+                    for (String s: studentData) {
+                        if (s.contains("/")) {
+                            courses.append("~").append(s);
+                        }
+                    }
+                    // create a new line after replacing the old password with a new one
+                    // create and write changed info
+                    String modifiedData = "";
+                    if (studentData.getLast().contains("/")){
+                        modifiedData = split[2] + "~" + studentData.get(1) + "~" +
+                                studentData.get(2) + courses;
+                    } else {
+                        modifiedData = split[2] + "~" + studentData.get(1) + "~" +
+                                studentData.get(2);
+                    }
+                    System.out.println(modifiedData);
+                    Main.removeLineFromFile("src/models/students.txt", split[1]);
+                    Main.writeData(modifiedData, "src/models/students.txt");
+                    // we also have to update the data in Faculty's student array list
+                    for (Student student: Faculty.getStudents()) {
+                        if (student.getId().equals(split[1])) {
+                            student.setName(split[2]);
                         }
                     }
                     writer("200");
