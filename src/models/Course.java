@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Course {
+    private final String courseId;
     private final String courseName;
     private final Teacher courseTeacher;
     private final int countOfUnits;
@@ -18,7 +19,8 @@ public class Course {
     private int presentedSemester;
     private Map<Student, Double> scores = new HashMap<>();
 
-    public Course(String courseName, Teacher courseTeacher, int countOfUnits, String examDate, int presentedSemester, boolean status) {
+    public Course(String courseName, Teacher courseTeacher, int countOfUnits, String examDate, int presentedSemester, boolean status, String courseId) {
+        this.courseId = courseId;
         this.courseName = courseName;
         this.courseTeacher = courseTeacher;
         if (!courseTeacher.getPresentedCourses().contains(this))
@@ -96,6 +98,10 @@ public class Course {
 
     public int getPresentedSemester() {
         return presentedSemester;
+    }
+
+    public String getCourseId() {
+        return courseId;
     }
 
     public Map<Student, Double> getScores() {
