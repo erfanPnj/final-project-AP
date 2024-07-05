@@ -47,7 +47,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   void showToast(BuildContext context, String message) {
     Fluttertoast.showToast(
-        msg: 'your password has successfully changed!',
+        msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,

@@ -5,6 +5,7 @@ import 'package:project2/Classes.dart';
 import 'package:project2/HomePage.dart';
 import 'package:project2/ToDo.dart';
 import 'package:project2/navigation.dart';
+import 'package:project2/pages.dart/Login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Amozeshyar",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Navigation(),
+      home: login(),
     );
   }
 }

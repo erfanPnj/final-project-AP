@@ -8,6 +8,7 @@ import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project2/pages.dart/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class profile extends StatefulWidget {
@@ -95,7 +96,11 @@ class _profileState extends State<profile> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ChangePassword(password: _password, studentId : _studentId, name: _name,);
+        return ChangePassword(
+          password: _password,
+          studentId: _studentId,
+          name: _name,
+        );
       },
     );
   }
@@ -211,7 +216,8 @@ class _profileState extends State<profile> {
                                     MaterialPageRoute(
                                       builder: (builder) => ToDo(),
                                     ));
-                              }, icon: Icon(
+                              },
+                              icon: Icon(
                                 Icons.task,
                                 size: 30,
                                 color: Colors.white,
@@ -224,7 +230,7 @@ class _profileState extends State<profile> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Signup()));
+                                            builder: (context) => login()));
                                   },
                                   icon: Icon(
                                     Icons.logout,
