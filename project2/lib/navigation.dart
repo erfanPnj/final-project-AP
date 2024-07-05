@@ -46,7 +46,7 @@ class _NavigationState extends State<Navigation> {
     pages = [
       HomePage(name: name, password: password, studentNumber: studentNumber),
       ToDo(),
-      Classes(),
+      Classes(name: name, password: password, studentNumber: studentNumber),
       ToDo(),
       ToDo()
     ];

@@ -1,30 +1,49 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project2/Dart/Course.dart';
+import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Teacher.dart';
 
 class Classes extends StatefulWidget {
-  const Classes({super.key});
+  Classes(
+      {super.key,
+      required this.name,
+      required this.studentNumber,
+      required this.password});
+
+  String? name;
+  String? studentNumber;
+  String? password;
 
   @override
   State<Classes> createState() => _ClassesState();
 }
 
 class _ClassesState extends State<Classes> {
+  String? name;
+  String? studentNumber;
+  String? password;
+  String response = '';
+  late List<String> proccessedResponse = [];
+  List<Teacher> teachers = [];
   List<Course> courses = [];
   int _selectedIndex = 0;
   bool isFocused = false;
-  static List<Widget> _widgetOptions = <Widget>[
-    Text('Home Page'),
-    Text('Search Page'),
-    Text('Classes Page'),
-    Text('Profile Page'),
-    Text('Settings Page'),
-  ];
+  Faculty faculty = Faculty('computer engineering', 2);
+
+  // static final List<Widget> _widgetOptions = <Widget>[
+  //   Text('Home Page'),
+  //   Text('Search Page'),
+  //   Text('Classes Page'),
+  //   Text('Profile Page'),
+  //   Text('Settings Page'),
+  // ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -32,17 +51,56 @@ class _ClassesState extends State<Classes> {
     });
   }
 
+  Future<void> getCoursesForOneStudent() async {
+    try {
+      final socket = await Socket.connect('***REMOVED***', 8080);
+      socket.write('getCoursesForOneStudent~${widget.studentNumber}\u0000');
+      socket.flush();
+
+      socket.listen((event) {
+        response = String.fromCharCodes(event);
+        setState(() {
+          proccessedResponse = splitor(response, '^');
+
+          if (proccessedResponse[0] == '400') {
+            courses.clear(); // Clear previous courses
+            for (int i = 1; i < proccessedResponse.length; i++) {
+              List<String> courseTeacher = splitor(proccessedResponse[i], '|');
+              List<String> course = splitor(courseTeacher[0], '~');
+              List<String> teacher = splitor(courseTeacher[1], '~');
+
+              courses.add(
+                Course(
+                  course[0],
+                  Teacher(teacher[0], teacher[1], int.parse(teacher[2])),
+                  int.parse(course[2]),
+                  course[3],
+                  faculty.semester!,
+                  bool.parse(course[4]),
+                  course[5], int.parse(course[6])
+                ),
+              );
+            }
+          }
+        });
+      });
+
+      //  await socket.done;
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+  
+  List<String> splitor(String entry, String regex) {
+    return entry.split(regex);
+  }
+
   @override
   void initState() {
     super.initState();
-    Teacher x = Teacher(
-        "ahmadian", "0", 0); // Assuming Teacher takes String, String, int
-    Course a = Course("riazi 2", x, 2, "not fixed yet", 3, true);
-    Teacher z = Teacher(
-        "shekofteh", "2", 0); // Assuming Teacher takes String, String, int
-    Course b = Course("Madar elec", z, 22, "not fixed yet", 3, true);
-    courses.add(a);
-    courses.add(b);
+    name = widget.name;
+    studentNumber = widget.studentNumber;
+    password = widget.password;
   }
 
   void _showAddItemModal() {
@@ -141,211 +199,215 @@ class _ClassesState extends State<Classes> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.blue.shade900,
-      //   type: BottomNavigationBarType.fixed,
-      //   items: const <BottomNavigationBarItem>[
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.task),
-      //       label: 'Tasks',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.class_),
-      //       label: 'Classes',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.assignment),
-      //       label: 'Assign',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.newspaper),
-      //       label: 'News',
-      //     ),
-      //   ],
-      //   currentIndex: _selectedIndex,
-      //   selectedItemColor: Colors.white,
-      //   unselectedItemColor: Colors.white70,
-      //   onTap: _onItemTapped,
-      // ),
-      // );
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
-            child: Row(
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "Classes",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      DateTime.now().toString().split(' ')[0],
-                      style: TextStyle(color: Colors.grey.shade500),
-                    )
-                  ],
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.yellow.shade900),
-                    ),
-                    onPressed: _showAddItemModal,
-                    child: Row(
-                      children: [
-                        Text(
-                          "Add Class",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                          ),
-                        ),
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: courses.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 3,
-                  color: Colors.blue.shade900,
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Column(
+    //getCoursesForOneStudent();
+    return RefreshIndicator(
+      onRefresh: getCoursesForOneStudent,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        // bottomNavigationBar: BottomNavigationBar(
+        //   backgroundColor: Colors.blue.shade900,
+        //   type: BottomNavigationBarType.fixed,
+        //   items: const <BottomNavigationBarItem>[
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.home),
+        //       label: 'Home',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.task),
+        //       label: 'Tasks',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.class_),
+        //       label: 'Classes',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.assignment),
+        //       label: 'Assign',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.newspaper),
+        //       label: 'News',
+        //     ),
+        //   ],
+        //   currentIndex: _selectedIndex,
+        //   selectedItemColor: Colors.white,
+        //   unselectedItemColor: Colors.white70,
+        //   onTap: _onItemTapped,
+        // ),
+        // );
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+              child: Row(
+                children: [
+                  Column(
                     children: [
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 5, 5),
-                            child: Icon(
-                              Icons.school,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                          ),
-                          Text(
-                            courses[index].courseName,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text(
-                              "Professor: ${courses[index].courseTeacher.name}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                        color: Colors.white,
-                        thickness: 2,
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 5, 0, 0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.format_list_numbered,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Number of units: ${courses[index].countOfUnits}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
+                      Text(
+                        "Classes",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 5, 0, 5),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.quiz,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Exam date : ${courses[index].examDate}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 5, 0, 5),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.menu_book,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Count of Assignments : ${courses[index].countOfAssignments}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
+                      Text(
+                        DateTime.now().toString().split(' ')[0],
+                        style: TextStyle(color: Colors.grey.shade500),
                       )
                     ],
                   ),
-                );
-              },
+                  Spacer(),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.yellow.shade900),
+                      ),
+                      onPressed: _showAddItemModal,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Add Class",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                            ),
+                          ),
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: courses.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 3,
+                    color: Colors.blue.shade900,
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 5, 5),
+                              child: Icon(
+                                Icons.school,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                            Text(
+                              courses[index].courseName,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text(
+                                "Professor: ${courses[index].courseTeacher.name}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          color: Colors.white,
+                          thickness: 2,
+                          indent: 20,
+                          endIndent: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 5, 0, 0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.format_list_numbered,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Number of units: ${courses[index].countOfUnits}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 5, 0, 5),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.quiz,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Exam date : ${courses[index].examDate}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 5, 0, 5),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.menu_book,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Count of Assignments : ${courses[index].countOfAssignments}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

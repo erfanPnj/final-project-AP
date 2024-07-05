@@ -3,11 +3,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
 import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -214,11 +216,11 @@ class _profileState extends State<profile> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (builder) => ToDo(),
+                                      builder: (builder) => Navigation(name: _name, studentNumber: _studentId, password: _password),
                                     ));
                               },
                               icon: Icon(
-                                Icons.task,
+                                Icons.arrow_back_ios_new_outlined,
                                 size: 30,
                                 color: Colors.white,
                               ),

@@ -7,8 +7,9 @@ class Course{
   final String courseName;
   final Teacher courseTeacher;
   final int countOfUnits;
+  final String courseId;
   List<Student> studentList = [];
-  bool status;
+  bool status; // is it active or not
   int countOfAssignments = 0;
   final String examDate; // it must be a string in the format of Year.Month.Day: 2024.4.10;
   List<Assignment> activeProjects = [];
@@ -16,7 +17,7 @@ class Course{
   int presentedSemester;
   Map<Student, double> scores = {};
 
-  Course(this.courseName, this.courseTeacher, this.countOfUnits, this.examDate, this.presentedSemester, this.status) {
+  Course(this.courseName, this.courseTeacher, this.countOfUnits, this.examDate, this.presentedSemester, this.status, this.courseId) {
     if (!courseTeacher.presentedCourses.contains(this)) {
       courseTeacher.addCourseToThisTeacher(this);
     }

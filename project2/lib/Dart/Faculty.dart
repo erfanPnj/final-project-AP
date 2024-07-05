@@ -18,7 +18,8 @@ class Faculty {
     _semester = semester;
   }
 
-  static int? get semester => _semester;
+  //static int? get semester => _semester;
+  int? get semester => _semester;
 
   static List<Student> get students => _students;
 
