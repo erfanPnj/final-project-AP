@@ -30,7 +30,7 @@ class _LogInState extends State<login> {
 
   Future<String> login() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............Connected to server on port 8080...........');
+      print('............logged in to server on port 8080...........');
 
       serverSocket.write(
           'logIn~${widget.studentIdController.text}~${widget.passwordController.text}\u0000');

@@ -11,26 +11,43 @@ import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key});
+// class HomePage extends StatelessWidget {
+//   HomePage(
+//       {super.key,
+//       required this.name,
+//       required this.studentId,
+//       required this.password});
+//   String? name;
+//   String? studentId;
+//   String? password;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: Home(),
+//     );
+//   }
+// }
+
+class HomePage extends StatefulWidget {
+  HomePage(
+      {super.key,
+      required this.name,
+      required this.studentId,
+      required this.password});
+  String? name;
+  String? studentId;
+  String? password;
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Home(),
-    );
-  }
+  State<HomePage> createState() => _HomeState();
 }
 
-class Home extends StatefulWidget {
-  const Home({Key? key});
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class _HomeState extends State<HomePage> {
+  String? _name;
+  String? _studentId;
+  String? _password;
   Student x = Student("Ali", "321", "nafahmi yevaqt");
   int numOfAssignments = 0;
   double worstScore = 20;
@@ -56,6 +73,12 @@ class _HomeState extends State<Home> {
     expanded = ToDo.getexpanded().take(2).toList();
     tamrina = Assignments.getTamrina();
     isDone = Assignments.getIsDone();
+    _name = widget.name;
+    _studentId = widget.studentId;
+    _password = widget.password;
+    print('home$_name');
+    print('home$_studentId');
+    print('home$_password');
   }
 
   @override
@@ -76,9 +99,9 @@ class _HomeState extends State<Home> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => profile(
-                            name: x.name,
-                            studentNumber: x.studentId,
-                            password: x.password,
+                            name: _name,
+                            studentNumber: _studentId,
+                            password: _password,
                           ),
                         ),
                       );

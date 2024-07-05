@@ -53,8 +53,8 @@ class _NavigationState extends State<Navigation> {
     print('\n');
     print(password);
     pages = [
-      // HomePage(name: name, password: password, studentNumber: studentNumber),
-      HomePage(),
+      HomePage(name: name, password: password, studentId: studentNumber),
+      // HomePage(),
       ToDo(),
       Classes(name: name, password: password, studentNumber: studentNumber),
       ToDo(),
