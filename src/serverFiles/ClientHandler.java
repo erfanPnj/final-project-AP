@@ -7,9 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 class ClientHandler extends Thread {
     Socket socket;
@@ -180,7 +178,7 @@ class ClientHandler extends Thread {
             case "changePass": {
                 try {
                     StringBuilder courses = new StringBuilder();
-                    List<String> studentData = Main.sendStudentDataToChangePassword(split[1]);
+                    List<String> studentData = Main.sendStudentData(split[1]);
                     for (String s: studentData) {
                         if (s.contains("/")) {
                             courses.append("~").append(s);
@@ -214,7 +212,7 @@ class ClientHandler extends Thread {
                 try {
                     System.out.println(split[1]);
                     StringBuilder courses = new StringBuilder();
-                    List<String> studentData = Main.sendStudentDataToChangePassword(split[1]);
+                    List<String> studentData = Main.sendStudentData(split[1]);
                     for (String s: studentData) {
                         if (s.contains("/")) {
                             courses.append("~").append(s);
@@ -243,6 +241,34 @@ class ClientHandler extends Thread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } break;
+            }
+            case "getCoursesForOneStudent": {
+                try {
+                    List<String> studentData = Main.sendStudentData(split[1]);
+                    List<String> courseIDs= new ArrayList<>();
+                    List<String> data;
+                    for (String s: studentData) {
+                        if (s.contains("/")) {
+                            String[] parts = s.split("/");
+                            courseIDs.add(parts[0]);// we want to store course ids in the list to send them to flutter
+                        }
+                    }
+                    // retrieve course data from database:
+                    data = Main.sendCourseData(courseIDs);
+                    StringBuilder serverResponse = new StringBuilder();
+
+                    for (String s: data) {
+                        if (data.indexOf(s) != data.size() - 1) {
+                            serverResponse.append(s).append("^");
+                        } else {
+                        serverResponse.append(s);
+                        }
+                    }
+                    writer("400" + "^" + serverResponse.toString());
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
             }
 //            case "GET: userInfo" : {
 //                if (loggedInUsers.contains(split[1])){

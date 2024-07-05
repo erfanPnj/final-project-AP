@@ -4,9 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.System.*;
 
@@ -113,12 +111,12 @@ public class Main {
             parts = data.split("~");
 
             for (Teacher t : Faculty.getTeachers()) {
-                if (t.getName().equals(parts[1])) {
+                if (t.getId().equals(parts[1])) {
                     if (parts[4].equals("true")) {
-                        list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), true, parts[4]));
+                        list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), true, parts[5]));
                         // update teachers data after adding course
                     } else {
-                        list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), false, parts[4]));
+                        list.add(new Course(parts[0], t, Integer.parseInt(parts[2]), parts[3], Faculty.getSemester(), false, parts[5]));
                     }
                     removeLineFromFile("src/models/teachers.txt", t.getId());
                     writeData(t.toString(), "src/models/teachers.txt");
@@ -144,7 +142,7 @@ public class Main {
                     if (parts[i].contains("/")) {
                         String[] courseGradePair = parts[i].split("/");
                         for (Course c : Faculty.getCourses()) {
-                            if (courseGradePair[0].equals(c.getCourseName())) {
+                            if (courseGradePair[0].equals(c.getCourseId())) {
                                 student.addCourseAndUnit(c);
 
                                 // this grade should also be added to allOfPoints and count of points should increase by 1:
@@ -167,7 +165,8 @@ public class Main {
         }
     }
 
-    public static void loadAssignmentData(List<Assignment> list) throws FileNotFoundException {
+    public static void loadAssignmentData(List<Assignment> list) throws IOException {
+        loadStudentData(Faculty.getStudents());
         File file = new File("src//models/assignments.txt");
         Scanner scanner = new Scanner(file);
 
@@ -175,10 +174,16 @@ public class Main {
             String data = scanner.nextLine();
             String[] parts;
             parts = data.split("~");
-            if (parts[2].equals("true"))
+            if (parts[2].equals("true")) {
                 list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true, parts[3]));
-            else
+            } else {
                 list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false, parts[3]));
+            }
+            for (Course course: Faculty.getCourses()) {
+                if (course.getCourseId().equals(parts[3])) {
+                    course.setCountOfAssignments(course.getCountOfAssignments() + 1);
+                }
+            }
         }
     }
 
@@ -200,13 +205,13 @@ public class Main {
         return new Student("null", "null", "null");
     }
 
-    static boolean isThisYourCourse(String courseName, String teacherId, String errorMessage) {
-        List<String> courseNames = new ArrayList<>();
+    static boolean isThisYourCourse(String courseId, String teacherId, String errorMessage) {
+        List<String> courseIds = new ArrayList<>();
 
         boolean isThisYourCourse = true;
         for (Course c : Faculty.getCourses()) {
-            courseNames.add(c.getCourseName());
-            if (c.getCourseName().equals(courseName)) {
+            courseIds.add(c.getCourseId());
+            if (c.getCourseId().equals(courseId)) {
                 if (!c.getCourseTeacher().getId().equals(teacherId)) {
                     out.println(errorMessage);
                     isThisYourCourse = false;
@@ -214,14 +219,14 @@ public class Main {
             }
         }
 
-        if (!courseNames.contains(courseName)) {
-            out.println("There isn't any course with this name!");
+        if (!courseIds.contains(courseId)) {
+            out.println("There isn't any course with this id!");
             return false;
         }
         return isThisYourCourse;
     }
 
-    public static List<String> sendStudentDataToChangePassword (String studentId) throws IOException {
+    public static List<String> sendStudentData(String studentId) throws IOException {
         File file = new File("src/models/students.txt");
         Scanner scanner = new Scanner(file);
         List<String> parts = new ArrayList<>();
@@ -233,6 +238,33 @@ public class Main {
             }
         }
         return parts;
+    }
+
+    public static List<String> sendCourseData (List<String> list) throws IOException {
+        File coursesFile = new File("src/models/courses.txt");
+        Scanner scanner = new Scanner(coursesFile);
+        List<String> courses = new ArrayList<>();
+
+        while (scanner.hasNextLine()) {
+            for (String s: list) {
+                String previouslyReadLine = scanner.nextLine();
+                if (previouslyReadLine.contains(s)) {
+                    for (Teacher t: Faculty.getTeachers()) {
+                        if (previouslyReadLine.contains(t.getId())) {
+                            StringBuilder countOfAssignments = new StringBuilder();
+                            for (Course course: Faculty.getCourses()) {
+                                if (course.getCourseId().equals(s)) {
+                                    countOfAssignments.append(course.getCountOfAssignments());
+                                }
+                            }
+                            // form the response and prepare it to send it to flutter
+                            courses.add(previouslyReadLine + "~" + countOfAssignments + "|" + t);
+                        }
+                    }
+                }
+            }
+        }
+        return courses;
     }
 
     public static void main(String[] args) throws IOException {
@@ -306,11 +338,11 @@ public class Main {
                             out.println("What's the student's ID?");
                             Scanner scanner4 = new Scanner(in);
                             String studentId = scanner4.nextLine();
-                            out.println("What's the target course?");
+                            out.println("What's the target course's ID?");
                             Scanner scanner5 = new Scanner(in);
-                            String courseName = scanner5.nextLine();
+                            String courseId = scanner5.nextLine();
 
-                            boolean isThisYourCourse = isThisYourCourse(courseName, teacherId,
+                            boolean isThisYourCourse = isThisYourCourse(courseId, teacherId,
                                     "You cannot add student to a course you don't have!");
 
                             //if it's not your course, then you cannot add a student :)
@@ -323,7 +355,7 @@ public class Main {
                                 if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
                                     removeLineFromFile("src/models/students.txt", studentId); // remove the previous data
                                     for (Course c : Faculty.getCourses()) {
-                                        if (c.getCourseName().equals(courseName)) {
+                                        if (c.getCourseId().equals(courseId)) {
                                             isAlreadyWritten = 1; // we found the target
                                             s.addCourseAndUnit(c);
                                             writeData(s.toString() + "/0.0", "src/models/students.txt"); // write the updated data to file
@@ -345,7 +377,7 @@ public class Main {
                                 // it to course and also the text file
                                 Student student = new Student(studentName, studentId, "@" + studentId); // @ + student ID is a default password
                                 for (Course c : Faculty.getCourses()) {
-                                    if (c.getCourseName().equals(courseName)) {
+                                    if (c.getCourseId().equals(courseId)) {
                                         c.addStudent(student);
                                         writeData(student.toString(), "src/models/students.txt"); // save the student to students.txt
                                         out.println("Done!");
@@ -360,11 +392,11 @@ public class Main {
                             out.println("What's the student's ID?");
                             Scanner scanner4 = new Scanner(in);
                             String studentId = scanner4.nextLine();
-                            out.println("What's the course name?");
+                            out.println("What's the course ID?");
                             Scanner scanner5 = new Scanner(in);
-                            String courseName = scanner5.nextLine();
+                            String courseId = scanner5.nextLine();
 
-                            boolean isThisYourCourse = isThisYourCourse(courseName, teacherId,
+                            boolean isThisYourCourse = isThisYourCourse(courseId, teacherId,
                                     "You cannot remove student from a course you don't have!");
 
                             //if it's not your course, then you cannot add a student :)
@@ -373,7 +405,7 @@ public class Main {
                             }
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName) && c.getCourseTeacher().getId().equals(teacherId)) {
+                                if (c.getCourseId().equals(courseId) && c.getCourseTeacher().getId().equals(teacherId)) {
                                     removeLineFromFile("src/models/students.txt", studentId);
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
@@ -387,11 +419,11 @@ public class Main {
                         }
                         break;
                         case 4: {
-                            out.println("Great! for which course do you wanna define a new assignment?");
+                            out.println("Great! for which course do you wanna define a new assignment? (enter course id)");
                             Scanner scanner3 = new Scanner(in);
-                            String courseName = scanner3.nextLine();
+                            String courseId = scanner3.nextLine();
 
-                            boolean isThisYourCourse = isThisYourCourse(courseName, teacherId,
+                            boolean isThisYourCourse = isThisYourCourse(courseId, teacherId,
                                     "You cannot define an assignment for a course you don't have!");
 
                             //if it's not your course, then you cannot add a student :)
@@ -407,21 +439,21 @@ public class Main {
                             int deadline = scanner5.nextInt();
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
-                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseName);
+                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
+                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseId);
                                     writeData(assignment.toString(), "src/models/assignments.txt");
-                                    c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, deadline);
+                                    c.getCourseTeacher().defineNewAssignment(c.getCourseId(), assignmentName, true, deadline);
                                     break;
                                 }
                             }
                         }
                         break;
                         case 5: {
-                            out.println("From what course do you want to delete an assignment?");
+                            out.println("From what course do you want to delete an assignment? (enter course id)");
                             Scanner scanner3 = new Scanner(in);
-                            String courseName = scanner3.nextLine();
+                            String courseId = scanner3.nextLine();
 
-                            boolean isCourseForTeacher = isThisYourCourse(courseName, teacherId,
+                            boolean isCourseForTeacher = isThisYourCourse(courseId, teacherId,
                                     "You cannot delete an assignment from a course that's not yours!");
 
                             if (!isCourseForTeacher) {
@@ -433,9 +465,9 @@ public class Main {
                             String assignmentName = scanner4.nextLine();
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
-                                    removeLineFromFile("src/models/assignments.txt", assignmentName, courseName);
-                                    c.getCourseTeacher().deleteAnAssignment(c.getCourseName(), assignmentName);
+                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
+                                    removeLineFromFile("src/models/assignments.txt", assignmentName, courseId);
+                                    c.getCourseTeacher().deleteAnAssignment(c.getCourseId(), assignmentName);
                                     break;
                                 }
                             }
@@ -447,9 +479,9 @@ public class Main {
                             String studentId = scanner3.nextLine();
                             out.println("In what course do you want to rate this student?");
                             Scanner scanner4 = new Scanner(in);
-                            String courseName = scanner4.nextLine();
+                            String courseId = scanner4.nextLine();
 
-                            boolean isThisYourCourse = isThisYourCourse(courseName, teacherId,
+                            boolean isThisYourCourse = isThisYourCourse(courseId, teacherId,
                                     "You cannot rate a student in a course you don't have!");
 
                             //if it's not your course, then you cannot add a student :)
@@ -462,8 +494,8 @@ public class Main {
                             double grade = scanner5.nextDouble();
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
-                                    c.getCourseTeacher().rateStudents(c.getCourseName(), studentId, grade);
+                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
+                                    c.getCourseTeacher().rateStudents(c.getCourseId(), studentId, grade);
                                     removeLineFromFile("src/models/students.txt", studentId); // remove previous data
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
@@ -477,11 +509,11 @@ public class Main {
                         }
                         break;
                         case 7: {
-                            out.println("For what course is this assignment?");
+                            out.println("For what course is this assignment? (enter course id)");
                             Scanner scanner3 = new Scanner(in);
-                            String courseName = scanner3.nextLine();
+                            String courseId = scanner3.nextLine();
 
-                            boolean isYourCourse = isThisYourCourse(courseName, teacherId,
+                            boolean isYourCourse = isThisYourCourse(courseId, teacherId,
                                     "You don't have this course in your course list!");
 
                             if (!isYourCourse)
@@ -497,10 +529,10 @@ public class Main {
                             int newDeadline = scanner5.nextInt();
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseName().equalsIgnoreCase(courseName)) {
+                                if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
                                     c.getCourseTeacher().changeAssignmentDeadline(assignmentName, newDeadline);
-                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseName);
-                                    removeLineFromFile("src/models/assignments.txt", courseName, assignmentName);
+                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseId);
+                                    removeLineFromFile("src/models/assignments.txt", courseId, assignmentName);
                                     writeData(assignment.toString(), "src/models/assignments.txt");
                                     break;
                                 }
@@ -579,9 +611,9 @@ public class Main {
                                     Scanner scanner2 = new Scanner(in);
                                     String courseExamDate = scanner2.nextLine();
 
-                                    out.println("What is the name of this course's teacher?");
+                                    out.println("What is the id of this course's teacher?");
                                     Scanner scanner3 = new Scanner(in);
-                                    String teacherName = scanner3.nextLine();
+                                    String teacherId = scanner3.nextLine();
 
                                     out.println("What is the course ID? (a 8 digit number)");
                                     Scanner scanner4 = new Scanner(in);
@@ -589,7 +621,7 @@ public class Main {
 
                                     Course course;
                                     for (Teacher t : Faculty.getTeachers()) {
-                                        if (t.getName().equals(teacherName)) {
+                                        if (t.getId().equals(teacherId)) {
                                             course = new Course(courseName, t, userInput, courseExamDate, Faculty.getSemester(), true, courseId);
                                             t.addCourseToThisTeacher(course);
                                             writeData(course.toString(), "src/models/courses.txt");
@@ -602,9 +634,9 @@ public class Main {
                                 }
 
                             } else {
-                                out.println("What is your target course name?");
+                                out.println("What is your target course ID?");
                                 Scanner scanner1 = new Scanner(in);
-                                String courseName = scanner1.nextLine();
+                                String courseId = scanner1.nextLine();
 //                                out.println("What's the student name?");
                                 String studentName = "";
                                 out.println("What's the student ID?");
@@ -622,7 +654,7 @@ public class Main {
                                     if (s.getId().equals(studentId)) { // student is already in file, so we want to overwrite it
                                         removeLineFromFile("src/models/students.txt", studentId); // remove the previous data
                                         for (Course c : Faculty.getCourses()) {
-                                            if (c.getCourseName().equals(courseName)) {
+                                            if (c.getCourseId().equals(courseId)) {
                                                 isAlreadyWritten = 1; // we found the target
                                                 s.addCourseAndUnit(c);
                                                 writeData(s.toString() + "/0.0", "src/models/students.txt"); // write the updated data to file
@@ -637,7 +669,7 @@ public class Main {
                                 if (isAlreadyWritten == 0) { // If this is a new student, we use the new object (student) and add
                                     // it to course and also the text file
                                     for (Course c : Faculty.getCourses()) {
-                                        if (c.getCourseName().equals(courseName)) {
+                                        if (c.getCourseId().equals(courseId)) {
                                             c.addStudent(student);
                                             writeData(student.toString(), "src/models/students.txt"); // save the student to students.txt
                                             out.println("Done!");
@@ -652,19 +684,21 @@ public class Main {
                             Scanner scanner1 = new Scanner(in);
                             out.println("What's the student's id?");
                             String studentId = scanner1.nextLine();
+//
+//                            out.println("What's the student's password?");
+//                            String studentPassword = scanner1.nextLine();
 
-                            out.println("What's the student's password?");
-                            String studentPassword = scanner1.nextLine();
 
-
-                            out.println("What's the course name?");
+                            out.println("What's the course id?");
                             Scanner scanner2 = new Scanner(in);
-                            String courseName = scanner2.nextLine();
+                            String courseId = scanner2.nextLine();
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName)) {
+                                if (c.getCourseId().equals(courseId)) {
                                     for (Student s : c.getStudentList()) {
                                         if (s.getId().equals(studentId)) {
+                                            out.println(s.getCourses().size() + "-----------");
                                             c.eliminateStudent(s);
+                                            out.println(s.getCourses().size()+ "-----------");
                                             removeLineFromFile("src/models/students.txt", studentId); // delete the old data
                                             writeData(s.toString(), "src/models/students.txt"); // write the updated data
                                             out.println("Done eliminating student!");
@@ -676,22 +710,29 @@ public class Main {
                         }
                         break;
                         case 4: {
-                            out.println("What's the name of the course you want to delete?");
+                            out.println("What's the id of the course you want to delete?");
                             Scanner scanner1 = new Scanner(in);
-                            String courseName = scanner1.nextLine();
+                            String courseId = scanner1.nextLine();
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName)) {
+                                if (c.getCourseId().equals(courseId)) {
+                                    for (Teacher t: Faculty.getTeachers()) {
+                                        if (t.getPresentedCourses().contains(c)) {
+                                            t.removeCourseFromThisTeacher(c);
+                                            removeLineFromFile("src/models/teachers.txt", t.getId());
+                                            writeData(t.toString(), "src/models/teachers.txt");
+                                        }
+                                    }
                                     Faculty.getCourses().remove(c);
-                                    removeLineFromFile("src/models/courses.txt", courseName);
+                                    removeLineFromFile("src/models/courses.txt", courseId);
                                     break;
                                 }
                             }
                         }
                         break;
                         case 5: {
-                            out.println("For what course are you defining this assignment? (write only course name)");
+                            out.println("For what course are you defining this assignment? (write only course id)");
                             Scanner scanner1 = new Scanner(in);
-                            String courseName = scanner1.nextLine();
+                            String courseId = scanner1.nextLine();
                             out.println("What would you call this assignment?");
                             Scanner scanner2 = new Scanner(in);
                             String assignmentName = scanner2.nextLine();
@@ -699,8 +740,8 @@ public class Main {
                             Scanner scanner3 = new Scanner(in);
                             int assignmentDeadline = scanner3.nextInt();
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName)) {
-                                    c.getCourseTeacher().defineNewAssignment(c.getCourseName(), assignmentName, true, assignmentDeadline);
+                                if (c.getCourseId().equals(courseId)) {
+                                    c.getCourseTeacher().defineNewAssignment(c.getCourseId(), assignmentName, true, assignmentDeadline);
                                     writeData(c.getActiveProjects().getLast().toString(), "src/models/assignments.txt");
                                     break;
                                 }
@@ -708,26 +749,26 @@ public class Main {
                         }
                         break;
                         case 6: { // deleteAnAssignment method is in Teacher.java, so we should somehow reach out to the teacher and invoke this method:
-                            out.println("Ok! for what course was this assignment defined?");
+                            out.println("Ok! for what course was this assignment defined? (enter course id)");
                             Scanner scanner1 = new Scanner(in);
-                            String courseName = scanner1.nextLine();
+                            String courseId = scanner1.nextLine();
                             out.println("What's the assignment title? (it's name)");
                             Scanner scanner2 = new Scanner(in);
                             String assignmentName = scanner2.nextLine();
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equals(courseName)) {
-                                    c.getCourseTeacher().deleteAnAssignment(c.getCourseName(), assignmentName);
+                                if (c.getCourseId().equals(courseId)) {
+                                    c.getCourseTeacher().deleteAnAssignment(c.getCourseId(), assignmentName);
                                     break;
                                 }
                             }
-                            removeLineFromFile("src/models/assignments.txt", assignmentName); // assignment is removed from file
+                            removeLineFromFile("src/models/assignments.txt", assignmentName, courseId); // assignment is removed from file
                             out.println("Your desired assignment has been successfully deleted.");
                         }
                         break;
                         case 7: {
-                            out.println("Ok! for what course was this assignment defined?");
+                            out.println("Ok! for what course was this assignment defined? (enter course id)");
                             Scanner scanner1 = new Scanner(in);
-                            String courseName = scanner1.nextLine();
+                            String courseId = scanner1.nextLine();
                             out.println("What's the assignment title? (it's name)");
                             Scanner scanner2 = new Scanner(in);
                             String assignmentName = scanner2.nextLine();
@@ -740,7 +781,7 @@ public class Main {
                                         Scanner scanner3 = new Scanner(in);
                                         int newDeadline = scanner3.nextInt();
                                         a.setDeadline(newDeadline);
-                                        removeLineFromFile("src/models/assignments.txt", assignmentName, courseName);
+                                        removeLineFromFile("src/models/assignments.txt", assignmentName, courseId);
                                         writeData(a.toString(), "src/models/assignments.txt");
                                     }
                                     break;
@@ -752,16 +793,16 @@ public class Main {
                             out.println("What's the student's ID?");
                             Scanner scanner1 = new Scanner(in);
                             String studentId = scanner1.nextLine();
-                            out.println("In what course are you intended to rate the student? (write only course name)");
+                            out.println("In what course are you intended to rate the student? (write only course id)");
                             Scanner scanner2 = new Scanner(in);
-                            String courseName = scanner2.nextLine();
+                            String courseId = scanner2.nextLine();
                             out.println("What's the grade?");
                             Scanner scanner3 = new Scanner(in);
                             double grade = scanner3.nextDouble();
 
                             for (Course c : Faculty.getCourses()) {
-                                if (c.getCourseName().equalsIgnoreCase(courseName)) {
-                                    c.getCourseTeacher().rateStudents(c.getCourseName(), studentId, grade);
+                                if (c.getCourseId().equalsIgnoreCase(courseId)) {
+                                    c.getCourseTeacher().rateStudents(c.getCourseId(), studentId, grade);
                                     removeLineFromFile("src/models/students.txt", studentId); // remove previous data
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {

@@ -33,7 +33,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return courseName + "~" + courseTeacher.getName() + "~" + countOfUnits + "~" + examDate + "~" + status;
+        return courseName + "~" + courseTeacher.getId() + "~" + countOfUnits + "~" + examDate + "~" + status + "~" + courseId + "~" + countOfAssignments;
     }
 
     public void setStudentList(List<Student> studentList) {

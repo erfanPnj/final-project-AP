@@ -20,7 +20,7 @@ public class Teacher {
         StringBuilder coursesString = new StringBuilder();
         for (Course c : presentedCourses) {
             if (c.getCourseTeacher().getId().equals(this.id))
-                coursesString.append("~").append(c.getCourseName());
+                coursesString.append("~").append(c.getCourseId());
         }
         return name + "~" + id + "~" + presentedCoursesCount + coursesString; // Like: Ali-1234-3
     }
@@ -39,6 +39,10 @@ public class Teacher {
             return;
         }
         presentedCourses.add(course);
+    }
+
+    public void removeCourseFromThisTeacher (Course course) {
+        this.getPresentedCourses().remove(course);
     }
 
     public String getId() {
@@ -61,20 +65,20 @@ public class Teacher {
         course.eliminateStudent(student);
     }
 
-    public void defineNewAssignment (String courseName, String assignmentName,
+    public void defineNewAssignment (String courseId, String assignmentName,
                                      boolean assignmentStatus, int deadline) {
         for (Course c : presentedCourses) {
-            if (c.getCourseName().equals(courseName)) {
-                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus, c.getCourseName()));
+            if (c.getCourseId().equals(courseId)) {
+                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus, c.getCourseId()));
                 c.setCountOfAssignments(c.getCountOfAssignments() + 1);
             }
         }
     }
 
-    public void deleteAnAssignment (String courseName, String assignmentName) {
+    public void deleteAnAssignment (String courseId, String assignmentName) {
         for (int i = 0; i < presentedCoursesCount; i++) { // using enhanced for loop causes ConcurrentModificationException
             // so we use traditional i and j loops:
-            if (presentedCourses.get(i).getCourseName().equals(courseName)) {
+            if (presentedCourses.get(i).getCourseId().equals(courseId)) {
                 // after finding the proper course, we check whether it is an active ot a deactivated project.
                 for (int j = 0; j < presentedCourses.get(i).getActiveProjects().toArray().length; j++) {
                     // got to presented courses of this teacher -> get the target course -> get the target assignment and
@@ -95,9 +99,9 @@ public class Teacher {
         }
     }
 
-    public void rateStudents (String courseName, String studentId, double point) {
+    public void rateStudents (String courseId, String studentId, double point) {
         for (Course c : presentedCourses) {
-            if (c.getCourseName().equals(courseName)) {
+            if (c.getCourseId().equals(courseId)) {
                 for (Student s : c.getStudentList()) {
                     if (s.getId().equals(studentId)) {
                         // given grade is added to scores of this course to use for finding higher score (highestScore() in Course.java):
