@@ -143,41 +143,10 @@ class _ClassesState extends State<Classes> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.blue.shade900,
-      //   type: BottomNavigationBarType.fixed,
-      //   items: const <BottomNavigationBarItem>[
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.task),
-      //       label: 'Tasks',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.class_),
-      //       label: 'Classes',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.assignment),
-      //       label: 'Assign',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.newspaper),
-      //       label: 'News',
-      //     ),
-      //   ],
-      //   currentIndex: _selectedIndex,
-      //   selectedItemColor: Colors.white,
-      //   unselectedItemColor: Colors.white70,
-      //   onTap: _onItemTapped,
-      // ),
-      // );
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+            padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
             child: Row(
               children: [
                 Column(
@@ -201,7 +170,7 @@ class _ClassesState extends State<Classes> {
                   child: TextButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.yellow.shade900),
+                          MaterialStatePropertyAll(Colors.orange.shade500),
                     ),
                     onPressed: _showAddItemModal,
                     child: Row(

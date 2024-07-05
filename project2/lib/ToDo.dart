@@ -7,25 +7,32 @@ class ToDo extends StatefulWidget {
 
   @override
   State<ToDo> createState() => _ToDoState();
+  static List<MapEntry<String, String>> getTasks() {
+    return tasks.entries.toList();
+  }
+
+  static List<bool> getexpanded() {
+    return expanded;
+  }
 }
 
 Map<String, String> tasks = new Map();
 
-var a = <String>{};
+// var a = <String>{};
 var page = 1;
 DateTime now = DateTime.now();
 DateTime x = DateTime(now.year, now.month, now.day);
+List<bool> expanded = [];
 
 class _ToDoState extends State<ToDo> {
-  List<bool> expanded = [];
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  _ToDoState() {
-    // Initialize expanded list based on the initial items in `a`
-    for (var _ in a) {
-      expanded.add(false);
-    }
-  }
+  // _ToDoState() {
+  //   // Initialize expanded list based on the initial items in `a`
+  //   for (var _ in a) {
+  //     expanded.add(false);
+  //   }
+  // }
 
   Future<void> _selectedDate() async {
     DateTime? picked = await showDatePicker(
@@ -61,7 +68,7 @@ class _ToDoState extends State<ToDo> {
   void _addNewItem(String newItem, String date) {
     setState(() {
       tasks[newItem] = date;
-      a.add(newItem);
+      // a.add(newItem);
       expanded.add(false);
     });
   }
@@ -154,7 +161,7 @@ class _ToDoState extends State<ToDo> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: a.toList().length,
+              itemCount: tasks.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -162,7 +169,7 @@ class _ToDoState extends State<ToDo> {
                     onLongPress: () {
                       setState(() {
                         tasks.remove(tasks.keys.toList()[index]);
-                        a.remove(a.toList()[index]);
+                        // a.remove(a.toList()[index]);
                         expanded.removeAt(index);
                       });
                     },
@@ -189,13 +196,17 @@ class _ToDoState extends State<ToDo> {
                           ),
                         ),
                         title: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 130, 20),
+                          padding: const EdgeInsets.fromLTRB(0, 5, 120, 20),
                           child: Column(
                             children: [
                               Text(
                                 tasks.keys.toList()[index],
                                 // a.toList()[index],
-                                style: TextStyle(color: Colors.blue.shade900),
+                                style: TextStyle(
+                                  color: Colors.blue.shade900,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                ),
                               ),
                               Text(
                                 tasks.values.toList()[index],
