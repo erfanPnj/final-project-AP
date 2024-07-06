@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Amozeshyar",
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Navigation(name: '', studentNumber: '', password: '',),
+      home: login(),
     );
   }
 }
