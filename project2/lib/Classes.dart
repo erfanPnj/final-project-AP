@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project2/Dart/Course.dart';
 import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Teacher.dart';
@@ -30,12 +31,14 @@ class _ClassesState extends State<Classes> {
   String? studentNumber;
   String? password;
   String response = '';
+  String responseForNewCourse = '';
   late List<String> proccessedResponse = [];
   List<Teacher> teachers = [];
   List<Course> courses = [];
   int _selectedIndex = 0;
   bool isFocused = false;
   Faculty faculty = Faculty('computer engineering', 2);
+  final TextEditingController _controller = TextEditingController();
 
   // static final List<Widget> _widgetOptions = <Widget>[
   //   Text('Home Page'),
@@ -71,14 +74,14 @@ class _ClassesState extends State<Classes> {
 
               courses.add(
                 Course(
-                  course[0],
-                  Teacher(teacher[0], teacher[1], int.parse(teacher[2])),
-                  int.parse(course[2]),
-                  course[3],
-                  faculty.semester!,
-                  bool.parse(course[4]),
-                  course[5], int.parse(course[6])
-                ),
+                    course[0],
+                    Teacher(teacher[0], teacher[1], int.parse(teacher[2])),
+                    int.parse(course[2]),
+                    course[3],
+                    faculty.semester!,
+                    bool.parse(course[4]),
+                    course[5],
+                    int.parse(course[6])),
               );
             }
           }
@@ -90,7 +93,36 @@ class _ClassesState extends State<Classes> {
       print("Error: $e");
     }
   }
-  
+
+  Future<void> requestForNewCourse() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write(
+          'requestForNewCourse~${widget.studentNumber}~${_controller.text}\u0000');
+      serverSocket.listen((event) {
+        responseForNewCourse = String.fromCharCodes(event);
+        if (responseForNewCourse == '400') {
+          showToast(context,
+              'your desired course has been successfully added\nplease refresh the page to see changes');
+        } else if (responseForNewCourse == '404') {
+          showToast(context, 'there isn\'t any course defined with this Id!');
+        }
+        Navigator.pop(context);
+        // getCoursesForOneStudent();
+      });
+    });
+  }
+
+  void showToast(BuildContext context, String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue.shade900,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   List<String> splitor(String entry, String regex) {
     return entry.split(regex);
   }
@@ -151,6 +183,7 @@ class _ClassesState extends State<Classes> {
                     height: 10,
                   ),
                   TextField(
+                    controller: _controller,
                     cursorColor: Colors.blue.shade900,
                     decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -171,7 +204,8 @@ class _ClassesState extends State<Classes> {
                   TextButton(
                     onPressed: () {
                       // read from the allCourses list and add to students course
-                      Navigator.pop(context);
+                      requestForNewCourse();
+                      getCoursesForOneStudent();
                     },
                     // ignore: sort_child_properties_last
                     child: Container(
