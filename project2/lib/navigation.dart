@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project2/Assignments.dart';
 import 'package:project2/Classes.dart';
+import 'package:project2/Dart/Assignment.dart';
 import 'package:project2/HomePage.dart';
+import 'package:project2/News.dart';
 import 'package:project2/ToDo.dart';
 
 class Navigation extends StatefulWidget {
@@ -57,8 +59,8 @@ class _NavigationState extends State<Navigation> {
       // HomePage(),
       ToDo(),
       Classes(name: name, password: password, studentNumber: studentNumber),
-      ToDo(),
-      ToDo()
+      Assignments(),
+      News()
     ];
   }
 
