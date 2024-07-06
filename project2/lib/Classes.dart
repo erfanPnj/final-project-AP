@@ -133,6 +133,7 @@ class _ClassesState extends State<Classes> {
     name = widget.name;
     studentNumber = widget.studentNumber;
     password = widget.password;
+    getCoursesForOneStudent();
   }
 
   void _showAddItemModal() {
