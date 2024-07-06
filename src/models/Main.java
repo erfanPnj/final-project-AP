@@ -244,10 +244,11 @@ public class Main {
         File coursesFile = new File("src/models/courses.txt");
         Scanner scanner = new Scanner(coursesFile);
         List<String> courses = new ArrayList<>();
+        String previouslyReadLine;
 
         while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
             for (String s: list) {
-                String previouslyReadLine = scanner.nextLine();
                 if (previouslyReadLine.contains(s)) {
                     for (Teacher t: Faculty.getTeachers()) {
                         if (previouslyReadLine.contains(t.getId())) {
@@ -263,7 +264,9 @@ public class Main {
                     }
                 }
             }
+
         }
+        scanner.close();
         return courses;
     }
 

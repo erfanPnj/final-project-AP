@@ -270,6 +270,92 @@ class ClientHandler extends Thread {
                 }
                 break;
             }
+            case "requestForNewCourse": {
+                try {
+//                    List<String> studentData = Main.sendStudentData(split[1]);
+//                    List<String> courseIDs= new ArrayList<>();
+//                    List<String> data;
+//                    String writerResponse = "";
+
+                    boolean serverResponseForCourseIdValidation = false;
+                    for (Course c: Faculty.getCourses()) {
+                        if (c.getCourseId().equals(split[2])) {
+                            serverResponseForCourseIdValidation = true;
+                            break;
+                        }
+                    }
+
+                    if (serverResponseForCourseIdValidation) {
+                        for (Student student: Faculty.getStudents()) {
+                            if (student.getId().equals(split[1])) {
+                                for (Course course: Faculty.getCourses()) {
+                                    if (course.getCourseId().equals(split[2])) {
+                                        student.addCourseAndUnit(course);
+                                        Main.removeLineFromFile("src/models/students.txt", split[1]);
+                                        Main.writeData(student.toString() + "/0.0","src/models/students.txt");
+                                    }
+                                }
+                            }
+                        }
+                        writer("400");
+                    } else {
+                        writer("404");
+                    }
+
+//                    if (writerResponse.equals("400")) {
+//                        courseIDs.add(split[2]);
+//                        data = Main.sendCourseData(courseIDs);
+//
+//                        StringBuilder serverResponse = new StringBuilder();
+//
+//                        for (String s: data) {
+//                            if (data.indexOf(s) != data.size() - 1) {
+//                                serverResponse.append(s).append("^");
+//                            } else {
+//                                serverResponse.append(s);
+//                            }
+//                        }
+//                        try {
+//                            writer(writerResponse + "^" + serverResponse.toString());
+//                        } catch (IOException e) {
+//                            System.err.println(e);
+//                        }
+//                    } else {
+//                        try {
+//                            writer(writerResponse);
+//                        } catch (IOException e) {
+//                            System.err.println(e);
+//                        }
+//                    }
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
+            }
+            case "getBestAndWorstScore": {
+                try {
+                    List<String> studentData = Main.sendStudentData(split[1]);
+                    List<Double> scores= new ArrayList<>();
+
+                    for (String s: studentData) {
+                        if (s.contains("/")) {
+                            String[] parts = s.split("/");
+                            scores.add(Double.parseDouble(parts[1]));// we want to store course ids in the list to send them to flutter
+                            scores.sort(Double::compareTo); // best score is last index
+                        }
+                    }
+
+                    StringBuilder response = new StringBuilder();
+                    for (double score : scores) {
+                        response.append("|").append(score);
+                    }
+
+                    writer("400" + response);
+
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+            }
 //            case "GET: userInfo" : {
 //                if (loggedInUsers.contains(split[1])){
 //                    try {
