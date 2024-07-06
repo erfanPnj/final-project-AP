@@ -219,10 +219,8 @@ class _NewsState extends State<News> {
             child: ListView.builder(
                 itemCount: inPage.length,
                 itemBuilder: (context, index) {
-                  return Center(
-                    child: Card(
-                      child: Text(inPage[index]),
-                    ),
+                  return Card(
+                    child: Text(inPage[index]),
                   );
                 }),
           )

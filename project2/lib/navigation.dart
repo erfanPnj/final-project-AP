@@ -64,7 +64,6 @@ class _NavigationState extends State<Navigation> {
     ];
   }
 
-// >>>>>>> e829487e463c1aa1de0a57948655e477921dbdd4
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

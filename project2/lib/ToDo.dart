@@ -23,16 +23,22 @@ var page = 1;
 DateTime now = DateTime.now();
 DateTime x = DateTime(now.year, now.month, now.day);
 List<bool> expanded = [];
+Map<String, String> undoneTasks = {};
 
 class _ToDoState extends State<ToDo> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  // _ToDoState() {
-  //   // Initialize expanded list based on the initial items in `a`
-  //   for (var _ in a) {
-  //     expanded.add(false);
-  //   }
-  // }
+
+  void undoneFill() {
+    setState(() {
+      undoneTasks.clear();
+      for (var i = 0; i < expanded.length; i++) {
+        if (!expanded[i]) {
+          undoneTasks[tasks.keys.toList()[i]] = tasks.values.toList()[i];
+        }
+      }
+    });
+  }
 
   Future<void> _selectedDate() async {
     DateTime? picked = await showDatePicker(
@@ -68,7 +74,6 @@ class _ToDoState extends State<ToDo> {
   void _addNewItem(String newItem, String date) {
     setState(() {
       tasks[newItem] = date;
-      // a.add(newItem);
       expanded.add(false);
     });
   }
@@ -140,16 +145,7 @@ class _ToDoState extends State<ToDo> {
                     onPressed: () {
                       setState(() {
                         page = 2;
-                      });
-                    },
-                    child: Text(
-                      'Done tasks',
-                      style: TextStyle(color: Colors.blue.shade900),
-                    )),
-                TextButton(
-                    onPressed: () {
-                      setState(() {
-                        page = 3;
+                        undoneFill();
                       });
                     },
                     child: Text(
@@ -161,21 +157,28 @@ class _ToDoState extends State<ToDo> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: tasks.length,
+              itemCount: page == 1 ? tasks.length : undoneTasks.length,
               itemBuilder: (context, index) {
+                var current = page == 1 ? tasks : undoneTasks;
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: GestureDetector(
                     onLongPress: () {
                       setState(() {
-                        tasks.remove(tasks.keys.toList()[index]);
-                        // a.remove(a.toList()[index]);
+                        tasks.remove(current.keys.toList()[index]);
                         expanded.removeAt(index);
+                        undoneFill();
                       });
                     },
                     onTap: () {
                       setState(() {
-                        expanded[index] = !expanded[index];
+                        expanded[tasks.keys
+                                .toList()
+                                .indexOf(current.keys.toList()[index])] =
+                            !expanded[tasks.keys
+                                .toList()
+                                .indexOf(current.keys.toList()[index])];
+                        undoneFill();
                       });
                     },
                     child: AnimatedContainer(
@@ -189,8 +192,14 @@ class _ToDoState extends State<ToDo> {
                         trailing: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 5, 5, 20),
                           child: Icon(
-                            expanded[index] ? Icons.check : Icons.close,
-                            color: expanded[index]
+                            expanded[tasks.keys
+                                    .toList()
+                                    .indexOf(current.keys.toList()[index])]
+                                ? Icons.check
+                                : Icons.close,
+                            color: expanded[tasks.keys
+                                    .toList()
+                                    .indexOf(current.keys.toList()[index])]
                                 ? Colors.green.shade500
                                 : Colors.red.shade500,
                           ),
@@ -200,7 +209,7 @@ class _ToDoState extends State<ToDo> {
                           child: Column(
                             children: [
                               Text(
-                                tasks.keys.toList()[index],
+                                current.keys.toList()[index],
                                 // a.toList()[index],
                                 style: TextStyle(
                                   color: Colors.blue.shade900,
@@ -209,7 +218,7 @@ class _ToDoState extends State<ToDo> {
                                 ),
                               ),
                               Text(
-                                tasks.values.toList()[index],
+                                current.values.toList()[index],
                                 // a.toList()[index],
                                 style: TextStyle(color: Colors.blue.shade900),
                               ),
