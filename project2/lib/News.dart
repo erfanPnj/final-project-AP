@@ -6,6 +6,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project2/Search.dart';
+import 'package:project2/main.dart';
+import 'package:project2/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_url_preview_v2/simple_url_preview.dart';
 
 class News extends StatefulWidget {
@@ -108,6 +111,7 @@ class _NewsState extends State<News> {
                               MaterialStatePropertyAll(Colors.blue.shade100)),
                       onPressed: () {
                         setState(() {
+                          page = 1;
                           inPage.clear();
                           inPage.addAll(NewsList);
                           searchTerms.clear();
@@ -133,6 +137,7 @@ class _NewsState extends State<News> {
                               MaterialStatePropertyAll(Colors.blue.shade100)),
                       onPressed: () {
                         setState(() {
+                          page = 2;
                           inPage.clear();
                           inPage.addAll(Events);
                           searchTerms.clear();
@@ -158,6 +163,7 @@ class _NewsState extends State<News> {
                               MaterialStatePropertyAll(Colors.blue.shade100)),
                       onPressed: () {
                         setState(() {
+                          page = 3;
                           inPage.clear();
                           inPage.addAll(Reminders);
                           searchTerms.clear();
@@ -183,6 +189,7 @@ class _NewsState extends State<News> {
                               MaterialStatePropertyAll(Colors.blue.shade100)),
                       onPressed: () {
                         setState(() {
+                          page = 4;
                           inPage.clear();
                           inPage.addAll(Birthdays);
                         });
@@ -229,29 +236,35 @@ class _NewsState extends State<News> {
           ),
           Expanded(
             child: ListView.builder(
-                itemCount: inPage.length,
+                itemCount: page == 1 ? 2 : inPage.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                     child: Card(
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'asset/images.jfif',
-                            width: 180,
-                          ),
-                          SizedBox(
-                            width: 60,
-                          ),
-                          Text(
-                            inPage[index],
-                          ),
-                        ],
-                      ),
+                      child: page == 1
+                          ? SimpleUrlPreview(
+                              url: "https://www.wikipedia.org/",
+                              bgColor: Colors.white,
+                              previewHeight: 150,
+                            )
+                          : Row(
+                              children: [
+                                Image.asset(
+                                  'asset/images.jfif',
+                                  width: 180,
+                                ),
+                                SizedBox(
+                                  width: 60,
+                                ),
+                                Text(
+                                  inPage[index],
+                                ),
+                              ],
+                            ),
                     ),
                   );
                 }),
-          )
+          ),
         ],
       ),
     );

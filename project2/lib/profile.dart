@@ -11,6 +11,8 @@ import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
+import 'package:project2/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class profile extends StatefulWidget {
@@ -216,7 +218,10 @@ class _profileState extends State<profile> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (builder) => Navigation(name: _name, studentNumber: _studentId, password: _password),
+                                      builder: (builder) => Navigation(
+                                          name: _name,
+                                          studentNumber: _studentId,
+                                          password: _password),
                                     ));
                               },
                               icon: Icon(
@@ -227,18 +232,32 @@ class _profileState extends State<profile> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 270),
-                              child: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => login()));
-                                  },
-                                  icon: Icon(
-                                    Icons.logout,
-                                    size: 30,
-                                    color: Colors.white,
-                                  )),
+                              child: Column(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => login()));
+                                      },
+                                      icon: Icon(
+                                        Icons.logout,
+                                        size: 30,
+                                        color: Colors.white,
+                                      )),
+                                  IconButton(
+                                      onPressed: () {
+                                        Provider.of<ThemeProvider>(context,
+                                                listen: false)
+                                            .toggleTheme();
+                                      },
+                                      icon: Icon(
+                                        Icons.sunny,
+                                        color: Colors.white,
+                                      ))
+                                ],
+                              ),
                             ),
                           ],
                         ),

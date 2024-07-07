@@ -15,13 +15,12 @@ class ToDo extends StatefulWidget {
     return expanded;
   }
 }
-
+//keys are Task names , values are dates of them
 Map<String, String> tasks = new Map();
-
-// var a = <String>{};
 var page = 1;
 DateTime now = DateTime.now();
 DateTime x = DateTime(now.year, now.month, now.day);
+// checks if the task is done
 List<bool> expanded = [];
 Map<String, String> undoneTasks = {};
 
