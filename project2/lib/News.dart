@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project2/Search.dart';
@@ -15,10 +16,11 @@ class News extends StatefulWidget {
 }
 
 final List<String> Events = ["Even1", "Event2", "Event3"];
-final List<String> NewsList = [];
+final List<String> NewsList = ["News1", "News2", "news3", "News4"];
 final List<String> Reminders = ["Reminder1", "Reminder2", "Reminder3"];
 final List<String> Birthdays = ["Birthday1", "Birthday2"];
 final List<String> inPage = [];
+// final List<String> AllOfNews = [];
 int page = 1;
 
 class _NewsState extends State<News> {
@@ -32,13 +34,11 @@ class _NewsState extends State<News> {
     'Grape',
     'Honeydew',
   ];
+
   @override
   void initState() {
     super.initState();
-    NewsList.add("News1");
-    NewsList.add("News2");
-    NewsList.add("News3");
-    NewsList.add("News4");
+    inPage.clear();
     inPage.addAll(NewsList);
   }
 
@@ -110,6 +110,10 @@ class _NewsState extends State<News> {
                         setState(() {
                           inPage.clear();
                           inPage.addAll(NewsList);
+                          searchTerms.clear();
+                          searchTerms.addAll(NewsList);
+                          searchTerms.addAll(Events);
+                          searchTerms.addAll(Reminders);
                         });
                       },
                       child: Text(
@@ -131,6 +135,10 @@ class _NewsState extends State<News> {
                         setState(() {
                           inPage.clear();
                           inPage.addAll(Events);
+                          searchTerms.clear();
+                          searchTerms.addAll(NewsList);
+                          searchTerms.addAll(Events);
+                          searchTerms.addAll(Reminders);
                         });
                       },
                       child: Text(
@@ -152,6 +160,10 @@ class _NewsState extends State<News> {
                         setState(() {
                           inPage.clear();
                           inPage.addAll(Reminders);
+                          searchTerms.clear();
+                          searchTerms.addAll(NewsList);
+                          searchTerms.addAll(Events);
+                          searchTerms.addAll(Reminders);
                         });
                       },
                       child: Text(
@@ -219,8 +231,24 @@ class _NewsState extends State<News> {
             child: ListView.builder(
                 itemCount: inPage.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    child: Text(inPage[index]),
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    child: Card(
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'asset/images.jfif',
+                            width: 180,
+                          ),
+                          SizedBox(
+                            width: 60,
+                          ),
+                          Text(
+                            inPage[index],
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 }),
           )

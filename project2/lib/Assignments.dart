@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -30,6 +32,7 @@ Map<String, bool> isDone = {};
 bool pressed = false;
 
 class _AssignmentsState extends State<Assignments> {
+  var _fileByte = "notUploaded yet!";
   @override
   void initState() {
     super.initState();
@@ -78,7 +81,7 @@ class _AssignmentsState extends State<Assignments> {
       builder: (BuildContext context) {
         return AlertDialog(
           content: Container(
-            height: 220,
+            height: 270,
             width: 4000,
             child: Column(
               children: [
@@ -145,6 +148,16 @@ class _AssignmentsState extends State<Assignments> {
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text("Score: (not fixed)")),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text("Upload: ${_fileByte}"),
+                    IconButton(
+                        onPressed: _pickfile, icon: Icon(Icons.upload_file))
+                  ],
+                )
               ],
             ),
           ),
@@ -293,5 +306,23 @@ class _AssignmentsState extends State<Assignments> {
         ],
       ),
     ));
+  }
+
+  void _pickfile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        // allowedExtensions: ['jpg', 'pdf'],
+        );
+
+    if (result != null && result.files.single.path != null) {
+      // File file = File(result.files.single.path);
+      PlatformFile file = result.files.first;
+      print(file.name);
+      File _file = File(result.files.single.path!);
+      setState(() {
+        _fileByte = file.size.toString();
+      });
+    } else {
+      print("No file selected");
+    }
   }
 }
