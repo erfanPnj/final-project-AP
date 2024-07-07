@@ -59,7 +59,7 @@ class _NavigationState extends State<Navigation> {
       // HomePage(),
       ToDo(),
       Classes(name: name, password: password, studentNumber: studentNumber),
-      Assignments(),
+      Assignments(studentId: studentNumber,),
       News()
     ];
   }

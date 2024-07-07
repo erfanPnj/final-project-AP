@@ -2,22 +2,26 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project2/Dart/Assignment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class Assignments extends StatefulWidget {
-  const Assignments({super.key});
+  Assignments({super.key, required this.studentId});
 
+  String? studentId;
   @override
   State<Assignments> createState() => _AssignmentsState();
   static List<Assignment> getTamrina() {
-    return tamrina;
+    return assinments;
   }
 
   static Map<String, bool> getIsDone() {
@@ -25,30 +29,39 @@ class Assignments extends StatefulWidget {
   }
 }
 
-List<Assignment> tamrina = [];
-List<Assignment> tamrinaInDay = [];
+List<Assignment> assinments = [];
+List<Assignment> assignmentsInDay = [];
 final TextEditingController _dateController = TextEditingController();
 Map<String, bool> isDone = {};
-bool pressed = false;
+// bool pressed = false;
 
 class _AssignmentsState extends State<Assignments> {
+  String? _studentId;
   var _fileByte = "notUploaded yet!";
+  List<String> response = [];
+
   @override
   void initState() {
     super.initState();
-    Assignment assi1 = Assignment("آزمایشگاه", 5, true, "azmayeshgah");
-    Assignment assi2 = Assignment("َap", 4, true, "azmayeshgah");
-    Assignment assi3 = Assignment("fizik2", 6, true, "azmayeshgah");
-    Assignment assi4 = Assignment("riazi2", 5, true, "azmayeshgah");
-    tamrina.add(assi1);
-    tamrina.add(assi2);
-    tamrina.add(assi3);
-    tamrina.add(assi4);
-    isDone[assi1.name] = false;
-    isDone[assi2.name] = false;
+    _studentId = widget.studentId;
+    requestAssignments();
+    validateAssignments(assinments);
+    // Assignment assi1 =
+    //     Assignment("آزمایشگاه", 5, true, "azmayeshgah", "2024.1.1");
+    // Assignment assi2 = Assignment("َap", 4, true, "azmayeshgah", "2024.1.1");
+    // Assignment assi3 = Assignment("fizik2", 6, true, "azmayeshgah", "2024.1.1");
+    // Assignment assi4 = Assignment("riazi2", 5, true, "azmayeshgah", "2024.1.1");
+    // assinments.add(assi1);
+    // assinments.add(assi2);
+    // assinments.add(assi3);
+    // assinments.add(assi4);
+    // isDone[assi1.name] = false;
+    // isDone[assi2.name] = false;
 
-    isDone[assi3.name] = false;
-    isDone[assi4.name] = false;
+    // isDone[assi3.name] = false;
+    // isDone[assi4.name] = false;
+    print(_studentId);
+    print(assinments.length);
 
     if (_dateController.text == "") {
       setState(() {
@@ -58,21 +71,76 @@ class _AssignmentsState extends State<Assignments> {
     }
   }
 
-  void inDay() {
-    setState(() {
-      tamrinaInDay.clear();
-      for (var tamrin in tamrina) {
-        if (tamrin.deadline ==
-                int.tryParse(
-                    _dateController.text.split(" ")[0].split("-")[2]) &&
-            int.tryParse(_dateController.text.split(" ")[0].split("-")[1]) ==
-                DateTime.now().month &&
-            int.tryParse(_dateController.text.split(" ")[0].split("-")[0]) ==
-                DateTime.now().year) {
-          tamrinaInDay.add(tamrin);
+  Future<void> requestAssignments() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write('requestAssignments~$_studentId~\u0000');
+      serverSocket.listen((event) {
+        response = splitor(String.fromCharCodes(event), "|");
+        if (response[0] == '400') {
+          assinments.clear();
+          for (int i = 1; i < response.length; i++) {
+            List<String> eachAssignmentData = splitor(response[i], '~');
+            Assignment toBeAdded = Assignment(
+              eachAssignmentData[0],
+              int.parse(eachAssignmentData[1]),
+              bool.parse(eachAssignmentData[2]),
+              eachAssignmentData[3],
+              eachAssignmentData[4],
+            );
+            isDone[eachAssignmentData[0]] = false;
+            assinments.add(toBeAdded);
+          }
+        } else {
+          showToast(context, 'something went wrong, try again later!');
         }
-      }
+      });
     });
+  }
+
+  void showToast(BuildContext context, String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue.shade900,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  List<String> splitor(String entry, String regex) {
+    return entry.split(regex);
+  }
+
+  void inDay() {
+    setState(
+      () {
+        // _dateController.text = DateTime.now().toString();
+        assignmentsInDay.clear();
+        for (var assignment in assinments) {
+          List<int> date = [];
+          for (String s in assignment.returnDefiningDate) {
+            // print(s);
+            date.add(int.parse(s));
+          }
+          for (var element in date) {
+            print(element);
+          }
+          // print(date.length);
+          // print('llllllllllllllllllllllllll');
+          // print(int.tryParse(
+          //             _dateController.text.split(" ")[0].split("-")[2]));
+          // print('llllllllllllllllllllllllll');
+          List<String> pickedDate = splitor(_dateController.text, '-');
+          if (date[2] == int.parse(pickedDate[2]) &&
+              int.parse(pickedDate[1]) == date[1] &&
+              int.parse(pickedDate[0]) == date[0]) {
+            assignmentsInDay.add(assignment);
+          }
+        }
+        // _dateController.text = '';
+      },
+    );
   }
 
   void _showDialog(Assignment tamrin, Map isDone) {
@@ -153,7 +221,7 @@ class _AssignmentsState extends State<Assignments> {
                 ),
                 Row(
                   children: [
-                    Text("Upload: ${_fileByte}"),
+                    Text("Upload: $_fileByte"),
                     IconButton(
                         onPressed: _pickfile, icon: Icon(Icons.upload_file))
                   ],
@@ -212,8 +280,30 @@ class _AssignmentsState extends State<Assignments> {
     }
   }
 
+  void validateAssignments(List<Assignment> assinments) {
+    DateTime definingDate;
+    DateTime currentTime = DateTime.now();
+    for (var assinment in assinments) {
+      definingDate = parseDate(assinment.definingDate);
+      if (assinment.deadline < calculateDifferenceInDays(currentTime, definingDate)) {
+        assinment.status = false; // assignments should be disabled after deadline 
+      }
+    }
+  }
+
+  DateTime parseDate(String dateString) {
+    DateFormat dateFormat = DateFormat('yyyy.MM.dd');
+    return dateFormat.parse(dateString);
+  }
+
+  int calculateDifferenceInDays(DateTime date1, DateTime date2) {
+    Duration difference = date1.difference(date2);
+    return difference.inDays;
+  }
+
   @override
   Widget build(BuildContext context) {
+    validateAssignments(assinments);
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
@@ -249,16 +339,19 @@ class _AssignmentsState extends State<Assignments> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: tamrinaInDay.length,
+              itemCount: assignmentsInDay.length,
               itemBuilder: (context, index) {
-                Assignment tamrin = tamrinaInDay[index];
+                Assignment _assignment = assignmentsInDay[index];
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: GestureDetector(
+                    
                     onLongPress: () {
-                      setState(() {
-                        _showDialog(tamrin, isDone);
-                      });
+                      _assignment.status
+                          ? setState(() {
+                              _showDialog(_assignment, isDone);
+                            })
+                          : showToast(context, 'this assignment is expired!');
                     },
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 300),
@@ -273,11 +366,12 @@ class _AssignmentsState extends State<Assignments> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                isDone[tamrin.name] = !isDone[tamrin.name]!;
+                                isDone[_assignment.name] =
+                                    !isDone[_assignment.name]!;
                               });
                             },
                             child: Icon(
-                              isDone[tamrin.name]!
+                              isDone[_assignment.name]!
                                   ? Icons.check_circle
                                   : Icons.circle_outlined,
                               color: Colors.blue.shade500,
@@ -289,9 +383,9 @@ class _AssignmentsState extends State<Assignments> {
                           child: Row(
                             children: [
                               Text(
-                                tamrinaInDay[index].name,
-                                // style: TextStyle(
-                                //     decoration:  TextDecoration.lineThrough),
+                                assignmentsInDay[index].name,
+                                style: TextStyle(
+                                    decoration: _assignment.status? TextDecoration.none : TextDecoration.lineThrough),
                               )
                             ],
                           ),
