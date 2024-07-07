@@ -1,34 +1,20 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project2/Classes.dart';
 import 'package:project2/Dart/Assignment.dart';
+import 'package:project2/Dart/Course.dart';
+import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Student.dart';
+import 'package:project2/Dart/Teacher.dart';
 import 'package:project2/ToDo.dart';
 import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
-
-// class HomePage extends StatelessWidget {
-//   HomePage(
-//       {super.key,
-//       required this.name,
-//       required this.studentId,
-//       required this.password});
-//   String? name;
-//   String? studentId;
-//   String? password;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: Home(),
-//     );
-//   }
-// }
 
 class HomePage extends StatefulWidget {
   HomePage(
@@ -48,27 +34,71 @@ class _HomeState extends State<HomePage> {
   String? _name;
   String? _studentId;
   String? _password;
-  Student x = Student("Ali", "321", "nafahmi yevaqt");
-  int numOfAssignments = 0;
-  double worstScore = 20;
-  double bestScore = 0;
+  // Student? x;
+  String response = '';
+  String responseForNewCourse = '';
+  late List<String> proccessedResponse = [];
+  List<Teacher> teachers = [];
+  List<Course> courses = [];
+  int countOfAssignments = 0;
+  double? worstScore;
+  double? bestScore;
   List<MapEntry<String, String>> tasks = [];
   List<bool> expanded = [];
   Map<String, bool> isDone = {};
   List<Assignment> tamrina = [];
+  List<String> bestAndWorst = [];
+  Faculty faculty = Faculty('computer engineering', 2);
+
+  Future<void> getCoursesForOneStudent() async {
+    try {
+      final socket = await Socket.connect('***REMOVED***', 8080);
+      socket.write('getCoursesForOneStudent~${widget.studentId}\u0000');
+      socket.flush();
+
+      socket.listen((event) {
+        response = String.fromCharCodes(event);
+        setState(() {
+          proccessedResponse = splitor(response, '^');
+
+          if (proccessedResponse[0] == '400') {
+            // courses.clear(); // Clear previous courses
+            for (int i = 1; i < proccessedResponse.length; i++) {
+              List<String> courseTeacher = splitor(proccessedResponse[i], '|');
+              List<String> course = splitor(courseTeacher[0], '~');
+              List<String> teacher = splitor(courseTeacher[1], '~');
+
+              courses.add(
+                Course(
+                    course[0],
+                    Teacher(teacher[0], teacher[1], int.parse(teacher[2])),
+                    int.parse(course[2]),
+                    course[3],
+                    faculty.semester!,
+                    bool.parse(course[4]),
+                    course[5],
+                    int.parse(course[6])),
+              );
+              // countOfAssignments += course[6] as int;
+            }
+          }
+        });
+      });
+
+      //  await socket.done;
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  List<String> splitor(String entry, String regex) {
+    return entry.split(regex);
+  }
 
   @override
   void initState() {
     super.initState();
-    for (var course in x.courses) {
-      numOfAssignments += course.countOfAssignments;
-      if (course.scores[x]! < worstScore) {
-        worstScore = course.scores[x]!;
-      }
-      if (course.scores[x]! > bestScore) {
-        bestScore = course.scores[x]!;
-      }
-    }
+    
     tasks = ToDo.getTasks().take(2).toList();
     expanded = ToDo.getexpanded().take(2).toList();
     tamrina = Assignments.getTamrina();
@@ -79,10 +109,34 @@ class _HomeState extends State<HomePage> {
     print('home$_name');
     print('home$_studentId');
     print('home$_password');
+    getCoursesForOneStudent();
+    showBestAndWorstScore();
+  }
+
+  Future<void> showBestAndWorstScore() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
+      print('---------------------------------show---------------------------');
+      serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
+      serverSocker.flush();
+      serverSocker.listen((event) {
+        bestAndWorst = splitor(String.fromCharCodes(event), '|'); 
+        if (bestAndWorst[0] == '400') {
+          worstScore = double.parse(bestAndWorst[1]);
+          bestScore = double.parse(bestAndWorst[bestAndWorst.length - 1]);
+          print(bestScore);
+          print(worstScore);
+        }
+      });
+      
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    for (Course course in courses) {
+      countOfAssignments += course.countOfAssignments;
+    }
+    showBestAndWorstScore();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -123,7 +177,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(30, 0, 10, 0),
+              padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
               child: Row(
                 children: [
                   Card(
@@ -134,7 +188,7 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.lock_clock),
-                          Text("${numOfAssignments} assignments left")
+                          Text("$countOfAssignments assignments left")
                         ],
                       ),
                     ),
@@ -150,7 +204,7 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.heart_broken_outlined),
-                          Text("Worst score's ${worstScore}")
+                          Text("Worst score's $worstScore")
                         ],
                       ),
                     ),
@@ -159,7 +213,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(30, 15, 10, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 10, 0),
               child: Row(
                 children: [
                   Card(
@@ -170,7 +224,7 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.emoji_emotions_outlined),
-                          Text("Best score's ${bestScore}")
+                          Text("Best score's $bestScore")
                         ],
                       ),
                     ),
@@ -186,7 +240,7 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.school),
-                          Text("You've ${x.countOfCourses} classes")
+                          Text("You've ${courses.length} classes")
                         ],
                       ),
                     ),
@@ -266,54 +320,57 @@ class _HomeState extends State<HomePage> {
             SizedBox(
               height: 10,
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 10, 20),
-              child: Row(
-                children: [
-                  Stack(
-                    alignment: Alignment.topRight,
-                    children: <Widget>[
-                      Card(
-                        color: Colors.white,
-                        elevation: 4,
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-                            child:
-                                // Icon(Icons.lock_clock),
-                                Text("should fix Assignments")),
-                      ),
-                      Positioned(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 20, 10, 20),
+                child: Row(
+                  children: [
+                    Stack(
+                      alignment: Alignment.topRight,
+                      children: <Widget>[
+                        Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+                              child:
+                                  // Icon(Icons.lock_clock),
+                                  Text("should fix Assignments")),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Stack(
-                    alignment: Alignment.topRight,
-                    children: <Widget>[
-                      Card(
-                        color: Colors.white,
-                        elevation: 4,
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-                            child:
-                                // Icon(Icons.lock_clock),
-                                Text("       First           ")),
-                      ),
-                      Positioned(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
+                        Positioned(
+                          child: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Stack(
+                      alignment: Alignment.topRight,
+                      children: <Widget>[
+                        Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+                              child:
+                                  // Icon(Icons.lock_clock),
+                                  Text("       First         ")),
+                        ),
+                        Positioned(
+                          child: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
