@@ -4,6 +4,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.lang.System.*;
@@ -175,9 +177,9 @@ public class Main {
             String[] parts;
             parts = data.split("~");
             if (parts[2].equals("true")) {
-                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true, parts[3]));
+                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), true, parts[3], parts[4]));
             } else {
-                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false, parts[3]));
+                list.add(new Assignment(parts[0], Integer.parseInt(parts[1]), false, parts[3], parts[4]));
             }
             for (Course course: Faculty.getCourses()) {
                 if (course.getCourseId().equals(parts[3])) {
@@ -270,7 +272,32 @@ public class Main {
         return courses;
     }
 
+    public static String getTodaysDate() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.M.d");
+        return today.format(formatter);
+    }
+
+    public static List<String> sendAssignmentData (List<String> listOfCourses) throws IOException{
+        File assignmentFile = new File("src/models/assignments.txt");
+        Scanner scanner = new Scanner(assignmentFile);
+        List<String> assignments = new ArrayList<>();
+        String previouslyReadLine;
+
+        while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
+            for (String s: listOfCourses) {
+                if (previouslyReadLine.contains(s)) {
+                    assignments.add(previouslyReadLine);
+                }
+            }
+        }
+        scanner.close();
+        return assignments;
+    }
+
     public static void main(String[] args) throws IOException {
+        out.println(getTodaysDate());
         new Faculty("computerEngineering", 2);
         // After each launch of the program, we need to load the data from text files:
         Main.loadStudentData(Faculty.getStudents()); // also loads teachers data and courses data
@@ -443,7 +470,7 @@ public class Main {
 
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
-                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseId);
+                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseId, getTodaysDate());
                                     writeData(assignment.toString(), "src/models/assignments.txt");
                                     c.getCourseTeacher().defineNewAssignment(c.getCourseId(), assignmentName, true, deadline);
                                     break;
@@ -534,7 +561,7 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
                                     c.getCourseTeacher().changeAssignmentDeadline(assignmentName, newDeadline);
-                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseId);
+                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseId, getTodaysDate());
                                     removeLineFromFile("src/models/assignments.txt", courseId, assignmentName);
                                     writeData(assignment.toString(), "src/models/assignments.txt");
                                     break;

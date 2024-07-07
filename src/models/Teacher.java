@@ -69,7 +69,7 @@ public class Teacher {
                                      boolean assignmentStatus, int deadline) {
         for (Course c : presentedCourses) {
             if (c.getCourseId().equals(courseId)) {
-                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus, c.getCourseId()));
+                c.getActiveProjects().add(new Assignment(assignmentName, deadline, assignmentStatus, c.getCourseId(), Main.getTodaysDate()));
                 c.setCountOfAssignments(c.getCountOfAssignments() + 1);
             }
         }

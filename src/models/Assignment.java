@@ -5,11 +5,13 @@ public class Assignment {
     private int deadline; // it shows how many days left until deactivation.
     private boolean status; // shows this assignment is active or not.
     private final String courseId;
-    public Assignment(String name, int deadline, boolean status, String courseId) {
+    private final String definingDate;
+    public Assignment(String name, int deadline, boolean status, String courseId, String definingDate) {
         this.name = name;
         this.deadline = deadline;
         this.status = status;
         this.courseId = courseId;
+        this.definingDate = definingDate;
     }
 
     public String getName() {
@@ -18,6 +20,10 @@ public class Assignment {
 
     public int getDeadline() {
         return deadline;
+    }
+
+    public String getDefiningData() {
+        return definingDate;
     }
 
     public void setDeadline(int deadline) {
@@ -34,7 +40,7 @@ public class Assignment {
 
     @Override
     public String toString() {
-        return name + "~" + deadline + "~" + status + "~" + courseId;
+        return name + "~" + deadline + "~" + status + "~" + courseId + "~" + definingDate;
     }
 }
 

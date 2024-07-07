@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
+import java.util.zip.InflaterOutputStream;
 
 class ClientHandler extends Thread {
     Socket socket;
@@ -355,6 +356,42 @@ class ClientHandler extends Thread {
                 } catch (IOException e) {
                     System.err.println(e);
                 }
+                break;
+            }
+            case "requestAssignments": {
+                try {
+                    List<String> studentData = Main.sendStudentData(split[1]);
+                    List<String> courseIDs= new ArrayList<>();
+                    for (String s: studentData) {
+                        if (s.contains("/")) {
+                            String[] parts = s.split("/");
+                            courseIDs.add(parts[0]);// we want to store course ids in this list
+                        }
+                    }
+//                    System.out.println(courseIDs.size());
+//                    for (String s: courseIDs) {
+//                        System.out.println(s);
+//                    }
+
+                    List<String> assignments = Main.sendAssignmentData(courseIDs);
+//                    System.out.println(assignments.size());
+//                    for (String s: assignments) {
+//                        System.out.println(s);
+//                    }
+                    StringBuilder serverData = new StringBuilder();
+                    for (String s: assignments) {
+                        serverData.append("|").append(s);
+                    }
+//                    System.out.println(serverData);
+                    if (assignments.isEmpty()) {
+                        writer("404");
+                    } else {
+                        writer("400" + serverData);
+                    }
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
             }
 //            case "GET: userInfo" : {
 //                if (loggedInUsers.contains(split[1])){
