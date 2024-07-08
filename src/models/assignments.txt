@@ -4,3 +4,4 @@ java8~11~true~12345679~2024.7.6
 integral~14~true~33258963~2024.7.3
 final~14~true~12345679~2024.7.5
 flutter~7~true~12345679~2024.1.7
+snakeGame~7~true~12345679~2024.7.8

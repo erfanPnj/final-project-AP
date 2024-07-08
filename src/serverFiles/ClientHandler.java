@@ -393,16 +393,49 @@ class ClientHandler extends Thread {
                 }
                 break;
             }
-//            case "GET: userInfo" : {
-//                if (loggedInUsers.contains(split[1])){
-//                    try {
-//                        writer(DataBase.userinfo(split[1]));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-//            }
+            case "requestTasks": {
+                try {
+                    List<String> tasks = Main.sendTasksData(split[1]);
+                    System.out.println(tasks.size());
+                    if (tasks.isEmpty()) {
+                        writer("404");
+                    } else {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (String s : tasks) {
+                            stringBuilder.append("|").append(s);
+                        }
+                        writer("400" + stringBuilder);
+                    }
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
+            }
+            case "changeTaskStatus": {
+                try {
+                    Main.changeTaskStatus(split[1], split[2]);
+                    writer("400");
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
+            }
+            case "deleteTask": {
+                try {
+                    Main.deleteTask(split[1], split[2]);
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+                break;
+            }
+            case "addTask": {
+                try {
+                    Main.writeData(split[2] + "~" + split[1] + "~" + Main.getTodayDate() + "~" + "false" + "\n", "src/models/tasks.txt");
+                    writer("400");
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+            }
         }
     }
 }

@@ -15,7 +15,6 @@ public class Server {
 
         System.out.println("Welcome to the server!");
         ServerSocket serverSocket = new ServerSocket(8080);
-        //Main.main(new String[]{});
         while (true) {
             System.out.println("Waiting for client...");
             new ClientHandler(serverSocket.accept()).start();

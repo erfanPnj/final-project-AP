@@ -189,24 +189,6 @@ public class Main {
         }
     }
 
-    static void singUp (String studentData) {
-        String[] parts = studentData.split("-");
-        Student student = new Student(parts[0], parts[1], parts[2]);
-
-        writeData(student.toString(), "src/models/students.txt");
-        Faculty.getStudents().add(student);
-    }
-
-    static Student login (String studentId, String studentPassword) {
-        for (Student s : Faculty.getStudents()) {
-            if (s.getId().equals(studentId) && s.getPassword().equals(studentPassword)) {
-                return s;
-            }
-        }
-        // then we check if the student's password is equal to the string "null", this is not a registered student
-        return new Student("null", "null", "null");
-    }
-
     static boolean isThisYourCourse(String courseId, String teacherId, String errorMessage) {
         List<String> courseIds = new ArrayList<>();
 
@@ -272,7 +254,7 @@ public class Main {
         return courses;
     }
 
-    public static String getTodaysDate() {
+    public static String getTodayDate() {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.M.d");
         return today.format(formatter);
@@ -296,8 +278,56 @@ public class Main {
         return assignments;
     }
 
+    public static List<String> sendTasksData (String studentId) throws IOException {
+        File file = new File("src/models/tasks.txt");
+        Scanner scanner = new Scanner(file);
+        List<String> tasks = new ArrayList<>();
+        String previouslyReadLine;
+
+        while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
+            if (previouslyReadLine.contains(studentId)) {
+                tasks.add(previouslyReadLine);
+            }
+        }
+        return tasks;
+    }
+
+    public static void changeTaskStatus (String studentId, String title) throws IOException {
+        File file = new File("src/models/tasks.txt");
+        Scanner scanner = new Scanner(file);
+        String previouslyReadLine;
+
+
+        while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
+            if (previouslyReadLine.contains(studentId) && previouslyReadLine.contains(title)) {
+                if (previouslyReadLine.endsWith("true")) {
+                    removeLineFromFile("src/models/tasks.txt", previouslyReadLine);
+                    writeData(previouslyReadLine.substring(0, previouslyReadLine.length() - 4) + "false", "src/models/tasks.txt");
+                } else {
+                    removeLineFromFile("src/models/tasks.txt", previouslyReadLine);
+                    writeData(previouslyReadLine.substring(0, previouslyReadLine.length() - 5) + "true", "src/models/tasks.txt");
+                }
+            }
+        }
+    }
+
+    public static void deleteTask (String studentId, String title) throws IOException {
+        File file = new File("src/models/tasks.txt");
+        Scanner scanner = new Scanner(file);
+        String previouslyReadLine;
+
+        while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
+            if (previouslyReadLine.contains(studentId) && previouslyReadLine.contains(title)) {
+                removeLineFromFile("src/models/tasks.txt", previouslyReadLine);
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        out.println(getTodaysDate());
+        out.println(getTodayDate());
         new Faculty("computerEngineering", 2);
         // After each launch of the program, we need to load the data from text files:
         Main.loadStudentData(Faculty.getStudents()); // also loads teachers data and courses data
@@ -470,7 +500,7 @@ public class Main {
 
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
-                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseId, getTodaysDate());
+                                    Assignment assignment = new Assignment(assignmentName, deadline, true, courseId, getTodayDate());
                                     writeData(assignment.toString(), "src/models/assignments.txt");
                                     c.getCourseTeacher().defineNewAssignment(c.getCourseId(), assignmentName, true, deadline);
                                     break;
@@ -561,7 +591,7 @@ public class Main {
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseTeacher().getId().equals(teacherId) && c.getCourseId().equalsIgnoreCase(courseId)) {
                                     c.getCourseTeacher().changeAssignmentDeadline(assignmentName, newDeadline);
-                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseId, getTodaysDate());
+                                    Assignment assignment = new Assignment(assignmentName, newDeadline, true, courseId, getTodayDate());
                                     removeLineFromFile("src/models/assignments.txt", courseId, assignmentName);
                                     writeData(assignment.toString(), "src/models/assignments.txt");
                                     break;
