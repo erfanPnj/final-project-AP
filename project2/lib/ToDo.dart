@@ -1,16 +1,21 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:project2/theme.dart';
 import 'package:project2/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class ToDo extends StatefulWidget {
-  const ToDo({super.key});
+  ToDo({super.key, required this.studentId});
 
+  String? studentId;
   @override
   State<ToDo> createState() => _ToDoState();
-  static List<MapEntry<String, String>> getTasks() {
+  static List<MapEntry<String, DateTime>> getTasks() {
     return tasks.entries.toList();
   }
 
@@ -20,15 +25,17 @@ class ToDo extends StatefulWidget {
 }
 
 //keys are Task names , values are dates of them
-Map<String, String> tasks = new Map();
+Map<String, DateTime> tasks = new Map();
 var page = 1;
 DateTime now = DateTime.now();
 DateTime x = DateTime(now.year, now.month, now.day);
 // checks if the task is done
 List<bool> expanded = [];
-Map<String, String> undoneTasks = {};
+Map<String, DateTime> undoneTasks = {};
 
 class _ToDoState extends State<ToDo> {
+  String? _studentId;
+  List<String> response = [];
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
@@ -36,11 +43,21 @@ class _ToDoState extends State<ToDo> {
     setState(() {
       undoneTasks.clear();
       for (var i = 0; i < expanded.length; i++) {
-        if (!expanded[i]) {
+        if (!expanded[i] && i < tasks.length) {
           undoneTasks[tasks.keys.toList()[i]] = tasks.values.toList()[i];
+          for (var element in undoneTasks.keys) {
+            print(element);
+          }
         }
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _studentId = widget.studentId;
+    requestTasks();
   }
 
   Future<void> _selectedDate() async {
@@ -74,10 +91,97 @@ class _ToDoState extends State<ToDo> {
     }
   }
 
-  void _addNewItem(String newItem, String date) {
+  void _addNewItem(String newItem, DateTime date) {
     setState(() {
       tasks[newItem] = date;
       expanded.add(false);
+    });
+  }
+
+  Future<void> requestTasks() async {
+    try {
+      print('Attempting to connect to server...');
+      Socket serverSocket = await Socket.connect('***REMOVED***', 8080);
+      print('Connected to server');
+
+      serverSocket.write('requestTasks~$_studentId\u0000');
+      await serverSocket.flush();
+      print('Request sent to server');
+
+      serverSocket.listen((event) {
+        response = splitor(String.fromCharCodes(event), '|');
+        if (response[0] == '400') {
+          for (int i = 1; i < response.length; i++) {
+            List<String> task = splitor(response[i], '~');
+            _addNewItem(task[0], parseDate(task[2]));
+            expanded[i - 1] = bool.parse(task[3]);
+          }
+        } else {
+          showToast(context, 'Something went wrong, please try again');
+        }
+      }, onError: (error) {
+        print('Error: $error');
+        showToast(context, 'Failed to retrieve tasks. Please try again.');
+      }, onDone: () {
+        print('Done with the socket connection');
+        serverSocket.destroy();
+      });
+    } catch (e) {
+      print('Socket Exception: $e');
+      showToast(context, 'Failed to connect to server. Please try again.');
+    }
+  }
+
+  void showToast(BuildContext context, String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue.shade900,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  DateTime parseDate(String dateString) {
+    DateFormat dateFormat = DateFormat('yyyy.MM.dd');
+    return dateFormat.parse(dateString);
+  }
+
+  List<String> splitor(String entry, String regex) {
+    return entry.split(regex);
+  }
+
+  Future<void> changeTaskStatus(String title) async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write('changeTaskStatus~$_studentId~$title\u0000');
+      serverSocket.flush();
+      serverSocket.listen((event) {
+        String response = String.fromCharCodes(event);
+        if (response == '400') {
+          showToast(context, 'well done!');
+        }
+      });
+    });
+  }
+
+  Future<void> deleteTask(String taskName) async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write('deleteTask~$_studentId~$taskName\u0000');
+      serverSocket.flush();
+    });
+  }
+
+  Future<void> addTask(String taskName) async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write('addTask~$_studentId~$taskName\u0000');
+      serverSocket.flush();
+      serverSocket.listen((event) {
+        String response = String.fromCharCodes(event);
+        if (response == '400') {
+          showToast(context, 'task has been successfully added!');
+        }
+      });
     });
   }
 
@@ -168,12 +272,14 @@ class _ToDoState extends State<ToDo> {
                   child: GestureDetector(
                     onLongPress: () {
                       setState(() {
+                        deleteTask(current.keys.toList()[index]);
                         tasks.remove(current.keys.toList()[index]);
                         expanded.removeAt(index);
                         undoneFill();
                       });
                     },
                     onTap: () {
+                      changeTaskStatus(current.keys.toList()[index]);
                       setState(() {
                         expanded[tasks.keys
                                 .toList()
@@ -186,7 +292,7 @@ class _ToDoState extends State<ToDo> {
                     },
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 300),
-                      height: 90,
+                      height: 100,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
@@ -208,7 +314,7 @@ class _ToDoState extends State<ToDo> {
                           ),
                         ),
                         title: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 120, 20),
+                          padding: const EdgeInsets.fromLTRB(0, 5, 30, 20),
                           child: Column(
                             children: [
                               Text(
@@ -225,7 +331,10 @@ class _ToDoState extends State<ToDo> {
                                 ),
                               ),
                               Text(
-                                current.values.toList()[index],
+                                current.values
+                                    .toList()[index]
+                                    .toString()
+                                    .split(' ')[0],
                                 // a.toList()[index],
                                 style: TextStyle(
                                     color: Provider.of<ThemeProvider>(context)
@@ -346,11 +455,12 @@ class _ToDoState extends State<ToDo> {
                               ),
                               onPressed: () {
                                 if (_textController.text.isNotEmpty) {
-                                  _addNewItem(_textController.text,
-                                      _dateController.text);
+                                  _addNewItem(
+                                      _textController.text, DateTime.now());
+                                  Navigator.of(context).pop();
+                                  addTask(_textController.text);
                                   _textController.clear();
                                   _dateController.clear();
-                                  Navigator.of(context).pop();
                                 }
                               },
                             ),

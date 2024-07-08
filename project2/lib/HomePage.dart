@@ -46,7 +46,7 @@ class _HomeState extends State<HomePage> {
   int countOfAssignments = 0;
   double? worstScore;
   double? bestScore;
-  List<MapEntry<String, String>> tasks = [];
+  List<MapEntry<String, DateTime>> tasks = [];
   List<bool> expanded = [];
   Map<String, bool> isDone = {};
   List<Assignment> tamrina = [];
@@ -266,7 +266,7 @@ class _HomeState extends State<HomePage> {
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 220, 0),
+              padding: const EdgeInsets.fromLTRB(10, 10, 20, 0),
               child: Text(
                 "Do your tasks",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -298,7 +298,7 @@ class _HomeState extends State<HomePage> {
                         ),
                       ),
                       title: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 5, 120, 20),
+                        padding: const EdgeInsets.fromLTRB(0, 5, 30, 20),
                         child: Column(
                           children: [
                             Text(
@@ -314,7 +314,7 @@ class _HomeState extends State<HomePage> {
                               ),
                             ),
                             Text(
-                              tasks[index].value,
+                              tasks[index].value.toString().split(' ')[0],
                               style: TextStyle(
                                   color: Provider.of<ThemeProvider>(context)
                                               .themeData ==

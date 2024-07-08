@@ -198,9 +198,9 @@ class _profileState extends State<profile> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
+      
+        // debugShowCheckedModeBanner: false,
+        child: Scaffold(
             body: SingleChildScrollView(
           child: Column(
             children: [
@@ -417,7 +417,7 @@ class _profileState extends State<profile> {
               )
             ],
           ),
-        )),
+        ),
       ),
     );
   }

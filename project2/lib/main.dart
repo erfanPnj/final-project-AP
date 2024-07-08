@@ -29,13 +29,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: Provider.of<ThemeProvider>(context).themeData,
-        debugShowCheckedModeBanner: false,
-        title: "Amozeshyar",
-        home: Navigation(
-          name: '',
-          password: '',
-          studentNumber: '',
-        ));
+      theme: Provider.of<ThemeProvider>(context).themeData,
+      debugShowCheckedModeBanner: false,
+      title: "Amozeshyar",
+      home: login(),
+    );
   }
 }
