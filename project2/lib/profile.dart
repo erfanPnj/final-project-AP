@@ -11,6 +11,7 @@ import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
+import 'package:project2/theme.dart';
 import 'package:project2/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -253,7 +254,11 @@ class _profileState extends State<profile> {
                                             .toggleTheme();
                                       },
                                       icon: Icon(
-                                        Icons.sunny,
+                                        Provider.of<ThemeProvider>(context)
+                                                    .themeData ==
+                                                darkTheme
+                                            ? Icons.sunny
+                                            : Icons.mode_night,
                                         color: Colors.white,
                                       ))
                                 ],

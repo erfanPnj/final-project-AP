@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:project2/theme.dart';
+import 'package:project2/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ToDo extends StatefulWidget {
   const ToDo({super.key});
@@ -15,6 +18,7 @@ class ToDo extends StatefulWidget {
     return expanded;
   }
 }
+
 //keys are Task names , values are dates of them
 Map<String, String> tasks = new Map();
 var page = 1;
@@ -211,7 +215,11 @@ class _ToDoState extends State<ToDo> {
                                 current.keys.toList()[index],
                                 // a.toList()[index],
                                 style: TextStyle(
-                                  color: Colors.blue.shade900,
+                                  color: Provider.of<ThemeProvider>(context)
+                                              .themeData ==
+                                          darkTheme
+                                      ? Colors.white
+                                      : Colors.blue.shade900,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 20,
                                 ),
@@ -219,7 +227,12 @@ class _ToDoState extends State<ToDo> {
                               Text(
                                 current.values.toList()[index],
                                 // a.toList()[index],
-                                style: TextStyle(color: Colors.blue.shade900),
+                                style: TextStyle(
+                                    color: Provider.of<ThemeProvider>(context)
+                                                .themeData ==
+                                            darkTheme
+                                        ? Colors.white
+                                        : Colors.blue.shade900),
                               ),
                             ],
                           ),

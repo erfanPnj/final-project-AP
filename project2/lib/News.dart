@@ -6,6 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project2/Search.dart';
+import 'package:project2/flutter_local_notification.dart';
 import 'package:project2/main.dart';
 import 'package:project2/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -265,6 +266,14 @@ class _NewsState extends State<News> {
                   );
                 }),
           ),
+          IconButton(
+              onPressed: () {
+                LocalNotifications.shoeSimpleNotification(
+                    title: "arji eshqe",
+                    body: "arji ye eshqe mane",
+                    payload: "this is simple");
+              },
+              icon: Icon(Icons.notification_add))
         ],
       ),
     );

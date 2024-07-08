@@ -15,6 +15,9 @@ import 'package:project2/ToDo.dart';
 import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
+import 'package:project2/theme.dart';
+import 'package:project2/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage(
@@ -180,7 +183,10 @@ class _HomeState extends State<HomePage> {
               child: Row(
                 children: [
                   Card(
-                    color: Colors.white,
+                    color: Provider.of<ThemeProvider>(context).themeData ==
+                            darkTheme
+                        ? Colors.blue.shade900
+                        : Colors.white,
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
@@ -196,7 +202,10 @@ class _HomeState extends State<HomePage> {
                     width: 30,
                   ),
                   Card(
-                    color: Colors.white,
+                    color: Provider.of<ThemeProvider>(context).themeData ==
+                            darkTheme
+                        ? Colors.blue.shade900
+                        : Colors.white,
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
@@ -216,7 +225,10 @@ class _HomeState extends State<HomePage> {
               child: Row(
                 children: [
                   Card(
-                    color: Colors.white,
+                    color: Provider.of<ThemeProvider>(context).themeData ==
+                            darkTheme
+                        ? Colors.blue.shade900
+                        : Colors.white,
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 30, 15, 30),
@@ -232,7 +244,10 @@ class _HomeState extends State<HomePage> {
                     width: 30,
                   ),
                   Card(
-                    color: Colors.white,
+                    color: Provider.of<ThemeProvider>(context).themeData ==
+                            darkTheme
+                        ? Colors.blue.shade900
+                        : Colors.white,
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(15, 30, 15, 30),
@@ -289,14 +304,23 @@ class _HomeState extends State<HomePage> {
                             Text(
                               tasks[index].key,
                               style: TextStyle(
-                                color: Colors.blue.shade900,
+                                color: Provider.of<ThemeProvider>(context)
+                                            .themeData ==
+                                        darkTheme
+                                    ? Colors.white
+                                    : Colors.blue.shade900,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 20,
                               ),
                             ),
                             Text(
                               tasks[index].value,
-                              style: TextStyle(color: Colors.blue.shade900),
+                              style: TextStyle(
+                                  color: Provider.of<ThemeProvider>(context)
+                                              .themeData ==
+                                          darkTheme
+                                      ? Colors.white
+                                      : Colors.blue.shade900),
                             ),
                           ],
                         ),
@@ -329,13 +353,17 @@ class _HomeState extends State<HomePage> {
                       alignment: Alignment.topRight,
                       children: <Widget>[
                         Card(
-                          color: Colors.white,
+                          color:
+                              Provider.of<ThemeProvider>(context).themeData ==
+                                      darkTheme
+                                  ? Colors.blue.shade900
+                                  : Colors.white,
                           elevation: 4,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
                             child:
                                 // Icon(Icons.lock_clock),
-                                Text("should fix Assignments"),
+                                Text("dont have an assignment"),
                           ),
                         ),
                         Positioned(
@@ -353,13 +381,17 @@ class _HomeState extends State<HomePage> {
                       alignment: Alignment.topRight,
                       children: <Widget>[
                         Card(
-                          color: Colors.white,
+                          color:
+                              Provider.of<ThemeProvider>(context).themeData ==
+                                      darkTheme
+                                  ? Colors.blue.shade900
+                                  : Colors.white,
                           elevation: 4,
                           child: Padding(
                               padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
                               child:
                                   // Icon(Icons.lock_clock),
-                                  Text("       First         ")),
+                                  Text("dont have an assignment")),
                         ),
                         Positioned(
                           child: Icon(
