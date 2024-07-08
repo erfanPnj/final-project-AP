@@ -197,15 +197,13 @@ class _profileState extends State<profile> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
-      
-        // debugShowCheckedModeBanner: false,
+        onWillPop: () async => false,
         child: Scaffold(
             body: SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(
-                height: 300,
+                height: 320,
                 width: 500,
                 child: Container(
                   child: Column(
@@ -231,38 +229,37 @@ class _profileState extends State<profile> {
                                 color: Colors.white,
                               ),
                             ),
+                            SizedBox(
+                              width: 230,
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  Provider.of<ThemeProvider>(context,
+                                          listen: false)
+                                      .toggleTheme();
+                                },
+                                icon: Icon(
+                                  Provider.of<ThemeProvider>(context)
+                                              .themeData ==
+                                          darkTheme
+                                      ? Icons.sunny
+                                      : Icons.mode_night,
+                                  color: Colors.white,
+                                )),
                             Padding(
-                              padding: const EdgeInsets.only(left: 270),
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => login()));
-                                      },
-                                      icon: Icon(
-                                        Icons.logout,
-                                        size: 30,
-                                        color: Colors.white,
-                                      )),
-                                  IconButton(
-                                      onPressed: () {
-                                        Provider.of<ThemeProvider>(context,
-                                                listen: false)
-                                            .toggleTheme();
-                                      },
-                                      icon: Icon(
-                                        Provider.of<ThemeProvider>(context)
-                                                    .themeData ==
-                                                darkTheme
-                                            ? Icons.sunny
-                                            : Icons.mode_night,
-                                        color: Colors.white,
-                                      ))
-                                ],
-                              ),
+                              padding: const EdgeInsets.only(left: 0),
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => login()));
+                                  },
+                                  icon: Icon(
+                                    Icons.logout,
+                                    size: 30,
+                                    color: Colors.white,
+                                  )),
                             ),
                           ],
                         ),
@@ -304,95 +301,253 @@ class _profileState extends State<profile> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        _name!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
                     ],
                   ),
                   decoration: BoxDecoration(color: Colors.blue.shade900),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 40, 0, 40),
-                child: Row(
-                  children: [
-                    Text(
-                      "name: ",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        (_name ?? ''),
-                        style: TextStyle(
-                          fontSize: 20,
-                          // fontFamily: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
-                child: Row(
-                  children: [
-                    Text(
-                      "Student Number: ",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        (_studentId ?? ''),
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(20, 40, 0, 40),
+              //   child: Row(
+              //     children: [
+              //       Text(
+              //         "name: ",
+              //         style: TextStyle(
+              //           fontSize: 20,
+              //         ),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.only(left: 10),
+              //         child: Text(
+              //           (_name ?? ''),
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //             // fontFamily: FontWeight.bold
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
+              //   child: Row(
+              //     children: [
+              //       Text(
+              //         "Student Number: ",
+              //         style: TextStyle(
+              //           fontSize: 20,
+              //         ),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.only(left: 10),
+              //         child: Text(
+              //           (_studentId ?? ''),
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //           ),
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               SizedBox(
-                height: 50,
-                width: 200,
-                child: ElevatedButton(
-                  onPressed: () {
-                    showChangeProfileDialog(context);
-                  },
-                  child: Text(
-                    "Change profile",
-                    style: TextStyle(
+                height: 30,
+              ),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Student number",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Spacer(),
+                          Text(
+                            _studentId!,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      indent: 15,
+                      endIndent: 15,
                       color: Colors.white,
                     ),
-                  ),
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.blue.shade900)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: SizedBox(
-                  height: 50,
-                  width: 200,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showChangePasswordDialog(context);
-                    },
-                    child: Text(
-                      "Change password",
-                      style: TextStyle(
-                        color: Colors.white,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Current term",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Spacer(),
+                          Text(
+                            // current term
+                            "1402-1403",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
                       ),
                     ),
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.blue.shade900)),
-                  ),
+                    Divider(
+                      indent: 15,
+                      endIndent: 15,
+                      color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Units",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Spacer(),
+                          Text(
+                            // count of units
+                            "16",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      indent: 15,
+                      endIndent: 15,
+                      color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Average score",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Spacer(),
+                          Text(
+                            //Average score
+                            "17.1",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blue.shade900,
+                ),
+                height: 200,
+                width: 300,
               ),
+              SizedBox(
+                height: 40,
+              ),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          SizedBox(
+                            width: 0,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              showChangeProfileDialog(context);
+                            },
+                            child: Text(
+                              "Change profile",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      indent: 15,
+                      endIndent: 15,
+                      color: Colors.white,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.key,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          SizedBox(
+                            width: 0,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              showChangePasswordDialog(context);
+                            },
+                            child: Text(
+                              "Change password",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blue.shade900,
+                ),
+                height: 120,
+                width: 300,
+              ),
+
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: SizedBox(
@@ -405,20 +560,80 @@ class _profileState extends State<profile> {
                     child: Text(
                       "Delete account",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.blue.shade900),
+                          MaterialStatePropertyAll(Colors.grey.shade300),
                     ),
                   ),
                 ),
               )
+
+              // SizedBox(
+              //   height: 50,
+              //   width: 200,
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       showChangeProfileDialog(context);
+              //     },
+              //     child: Text(
+              //       "Change profile",
+              //       style: TextStyle(
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //     style: ButtonStyle(
+              //         backgroundColor:
+              //             MaterialStatePropertyAll(Colors.blue.shade900)),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 0),
+              //   child: SizedBox(
+              //     height: 50,
+              //     width: 200,
+              //     child: ElevatedButton(
+              //       onPressed: () {
+              //         showChangePasswordDialog(context);
+              //       },
+              //       child: Text(
+              //         "Change password",
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //         ),
+              //       ),
+              //       style: ButtonStyle(
+              //           backgroundColor:
+              //               MaterialStatePropertyAll(Colors.blue.shade900)),
+              //     ),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 20),
+              //   child: SizedBox(
+              //     height: 50,
+              //     width: 200,
+              //     child: ElevatedButton(
+              //       onPressed: () {
+              //         showDeleteAccDialog();
+              //       },
+              //       child: Text(
+              //         "Delete account",
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //         ),
+              //       ),
+              //       style: ButtonStyle(
+              //         backgroundColor:
+              //             MaterialStatePropertyAll(Colors.blue.shade900),
+              //       ),
+              //     ),
+              //   ),
+              // )
             ],
           ),
-        ),
-      ),
-    );
+        )));
   }
 }

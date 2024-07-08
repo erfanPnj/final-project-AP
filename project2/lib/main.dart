@@ -8,6 +8,7 @@ import 'package:project2/ToDo.dart';
 import 'package:project2/flutter_local_notification.dart';
 import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
+import 'package:project2/profile.dart';
 import 'package:project2/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -29,10 +30,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: Provider.of<ThemeProvider>(context).themeData,
-      debugShowCheckedModeBanner: false,
-      title: "Amozeshyar",
-      home: login(),
-    );
+        theme: Provider.of<ThemeProvider>(context).themeData,
+        debugShowCheckedModeBanner: false,
+        title: "Amozeshyar",
+        home: login());
   }
 }

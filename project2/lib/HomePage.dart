@@ -179,7 +179,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+              padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
               child: Row(
                 children: [
                   Card(
@@ -198,9 +198,10 @@ class _HomeState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 30,
-                  ),
+                  // SizedBox(
+                  //   width: 30,
+                  // ),
+                  Spacer(),
                   Card(
                     color: Provider.of<ThemeProvider>(context).themeData ==
                             darkTheme
@@ -221,7 +222,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 10, 0),
+              padding: const EdgeInsets.fromLTRB(35, 20, 35, 0),
               child: Row(
                 children: [
                   Card(
@@ -240,9 +241,10 @@ class _HomeState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 30,
-                  ),
+                  // SizedBox(
+                  //   width: 30,
+                  // ),
+                  Spacer(),
                   Card(
                     color: Provider.of<ThemeProvider>(context).themeData ==
                             darkTheme
@@ -343,6 +345,35 @@ class _HomeState extends State<HomePage> {
             SizedBox(
               height: 10,
             ),
+            // ListView.builder(
+            //     scrollDirection: Axis.vertical,
+            //     itemCount: tamrina == null ? 0 : tamrina.length,
+            //     itemBuilder: (context, index) {
+            //       return Stack(
+            //         alignment: Alignment.topRight,
+            //         children: [
+            //           Card(
+            //             color: Provider.of<ThemeProvider>(context).themeData ==
+            //                     darkTheme
+            //                 ? Colors.blue.shade900
+            //                 : Colors.white,
+            //             elevation: 4,
+            //             child: Padding(
+            //               padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+            //               child:
+            //                   // Icon(Icons.lock_clock),
+            //                   Text(tamrina[index].name),
+            //             ),
+            //           ),
+            //           Positioned(
+            //             child: Icon(
+            //               Icons.check_circle,
+            //               color: Colors.green,
+            //             ),
+            //           ),
+            //         ],
+            //       );
+            //     }),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(

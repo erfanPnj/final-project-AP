@@ -266,14 +266,6 @@ class _NewsState extends State<News> {
                   );
                 }),
           ),
-          IconButton(
-              onPressed: () {
-                LocalNotifications.shoeSimpleNotification(
-                    title: "arji eshqe",
-                    body: "arji ye eshqe mane",
-                    payload: "this is simple");
-              },
-              icon: Icon(Icons.notification_add))
         ],
       ),
     );

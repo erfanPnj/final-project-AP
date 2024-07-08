@@ -285,8 +285,10 @@ class _AssignmentsState extends State<Assignments> {
     DateTime currentTime = DateTime.now();
     for (var assinment in assinments) {
       definingDate = parseDate(assinment.definingDate);
-      if (assinment.deadline < calculateDifferenceInDays(currentTime, definingDate)) {
-        assinment.status = false; // assignments should be disabled after deadline 
+      if (assinment.deadline <
+          calculateDifferenceInDays(currentTime, definingDate)) {
+        assinment.status =
+            false; // assignments should be disabled after deadline
       }
     }
   }
@@ -345,7 +347,6 @@ class _AssignmentsState extends State<Assignments> {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: GestureDetector(
-                    
                     onLongPress: () {
                       _assignment.status
                           ? setState(() {
@@ -385,7 +386,9 @@ class _AssignmentsState extends State<Assignments> {
                               Text(
                                 assignmentsInDay[index].name,
                                 style: TextStyle(
-                                    decoration: _assignment.status? TextDecoration.none : TextDecoration.lineThrough),
+                                    decoration: _assignment.status
+                                        ? TextDecoration.none
+                                        : TextDecoration.lineThrough),
                               )
                             ],
                           ),

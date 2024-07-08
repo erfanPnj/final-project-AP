@@ -273,7 +273,7 @@ class _ClassesState extends State<Classes> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+              padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
               child: Row(
                 children: [
                   Column(

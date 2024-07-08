@@ -274,8 +274,8 @@ class _SignupState extends State<Signup> {
                             style: ButtonStyle(
                               textStyle: MaterialStateProperty.all(
                                   TextStyle(color: Colors.white)),
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.blue.shade900),
+                              backgroundColor: MaterialStateProperty.all(
+                                  Colors.blue.shade900),
                             ),
                             onPressed: signup,
                             child: Text(

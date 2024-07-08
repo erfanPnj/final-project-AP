@@ -35,8 +35,8 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
   void ChangeProfileDetails() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
       print('............Connected to server on port 8080...........');
-      serverSocket.write(
-          'changeProfile~${widget.id}~${_nameController.text}\u0000');
+      serverSocket
+          .write('changeProfile~${widget.id}~${_nameController.text}\u0000');
       serverSocket.flush();
       serverSocket.listen((event) {
         String response = String.fromCharCodes(event);
@@ -72,8 +72,6 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
     _idFocusNode.addListener(() {
       setState(() {});
     });
-
-    
   }
 
   Color gray = Color.fromARGB(255, 180, 169, 169);
@@ -176,7 +174,7 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
       ],
     );
   }
-  
+
   @override
   void dispose() {
     _detailController.dispose();
