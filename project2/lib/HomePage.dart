@@ -98,7 +98,7 @@ class _HomeState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    
+
     tasks = ToDo.getTasks().take(2).toList();
     expanded = ToDo.getexpanded().take(2).toList();
     tamrina = Assignments.getTamrina();
@@ -119,7 +119,7 @@ class _HomeState extends State<HomePage> {
       serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
       serverSocker.flush();
       serverSocker.listen((event) {
-        bestAndWorst = splitor(String.fromCharCodes(event), '|'); 
+        bestAndWorst = splitor(String.fromCharCodes(event), '|');
         if (bestAndWorst[0] == '400') {
           worstScore = double.parse(bestAndWorst[1]);
           bestScore = double.parse(bestAndWorst[bestAndWorst.length - 1]);
@@ -127,7 +127,6 @@ class _HomeState extends State<HomePage> {
           print(worstScore);
         }
       });
-      
     });
   }
 
@@ -333,10 +332,11 @@ class _HomeState extends State<HomePage> {
                           color: Colors.white,
                           elevation: 4,
                           child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-                              child:
-                                  // Icon(Icons.lock_clock),
-                                  Text("should fix Assignments")),
+                            padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+                            child:
+                                // Icon(Icons.lock_clock),
+                                Text("should fix Assignments"),
+                          ),
                         ),
                         Positioned(
                           child: Icon(
