@@ -118,7 +118,7 @@ public class Student {
     }
 
     public void printStudentAllTimeAvg () {
-        System.out.println(this.getAllTimeAverage());
+        System.out.printf("%.2f%n", this.getAllTimeAverage());
     }
 
     public void printRegisteredAvg () {
@@ -138,7 +138,9 @@ public class Student {
             if (c.getScores().containsKey(this)) { // check if there is a grade related to this student in course c
                 grade.append("/").append(c.getScores().get(this));
             }
-            coursesString.append("~").append(c.getCourseId()).append(grade);
+            if (!coursesString.toString().contains(c.getCourseId())) {
+                coursesString.append("~").append(c.getCourseId()).append(grade);
+            }
         }
         return name + "~" + studentId + "~" + password + coursesString; // Like: Erfan-4022-ap-ec
     }

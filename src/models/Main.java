@@ -52,6 +52,7 @@ public class Main {
         // Write the updated lines back to the file
         Files.write(path, updatedLines);
         out.println("DONE...!");
+        scanner.close();
     }
 
     static void showTeacherMenu() {
@@ -99,6 +100,7 @@ public class Main {
             Teacher teacher = new Teacher(parts[0], parts[1], Integer.parseInt(parts[2]));
             list.add(teacher);
         }
+        scanner.close();
     }
 
     public static void loadCourseData(List<Course> list) throws IOException {
@@ -126,6 +128,7 @@ public class Main {
                 }
             }
         }
+        scanner.close();
     }
 
     public static void loadStudentData(List<Student> list) throws IOException {
@@ -165,6 +168,7 @@ public class Main {
             }
             list.add(student);
         }
+        scanner.close();
     }
 
     public static void loadAssignmentData(List<Assignment> list) throws IOException {
@@ -187,6 +191,7 @@ public class Main {
                 }
             }
         }
+        scanner.close();
     }
 
     static boolean isThisYourCourse(String courseId, String teacherId, String errorMessage) {
@@ -221,6 +226,7 @@ public class Main {
                 parts = List.of(previouslyReadLine.split("~"));
             }
         }
+        scanner.close();
         return parts;
     }
 
@@ -290,6 +296,7 @@ public class Main {
                 tasks.add(previouslyReadLine);
             }
         }
+        scanner.close();
         return tasks;
     }
 
@@ -311,6 +318,7 @@ public class Main {
                 }
             }
         }
+        scanner.close();
     }
 
     public static void deleteTask (String studentId, String title) throws IOException {
@@ -324,6 +332,7 @@ public class Main {
                 removeLineFromFile("src/models/tasks.txt", previouslyReadLine);
             }
         }
+        scanner.close();
     }
 
     public static void main(String[] args) throws IOException {
@@ -862,12 +871,14 @@ public class Main {
 
                             for (Course c : Faculty.getCourses()) {
                                 if (c.getCourseId().equalsIgnoreCase(courseId)) {
-                                    c.getCourseTeacher().rateStudents(c.getCourseId(), studentId, grade);
                                     removeLineFromFile("src/models/students.txt", studentId); // remove previous data
                                     for (Student s : Faculty.getStudents()) {
                                         if (s.getId().equals(studentId)) {
+                                            c.getScores().remove(s);
+                                            c.getCourseTeacher().rateStudents(c.getCourseId(), studentId, grade);
                                             // write the updated data to the file
                                             writeData(s.toString(), "src/models/students.txt");
+                                            break;
                                         }
                                     }
                                     break;

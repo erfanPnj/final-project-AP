@@ -254,6 +254,11 @@ class ClientHandler extends Thread {
                             courseIDs.add(parts[0]);// we want to store course ids in the list to send them to flutter
                         }
                     }
+
+                    if (courseIDs.isEmpty()) {
+                        writer("404");
+                        break;
+                    }
                     // retrieve course data from database:
                     data = Main.sendCourseData(courseIDs);
                     StringBuilder serverResponse = new StringBuilder();
@@ -277,6 +282,15 @@ class ClientHandler extends Thread {
 //                    List<String> courseIDs= new ArrayList<>();
 //                    List<String> data;
 //                    String writerResponse = "";
+                    List<String> studentOldData = Main.sendStudentData(split[1]);
+                    StringBuilder studentCurrentLineInDb = new StringBuilder();
+                    for (String s: studentOldData) {
+                        if (studentOldData.indexOf(s) != studentOldData.size() - 1) {
+                            studentCurrentLineInDb.append(s).append("~");
+                        } else {
+                            studentCurrentLineInDb.append(s);
+                        }
+                    }
 
                     boolean serverResponseForCourseIdValidation = false;
                     for (Course c: Faculty.getCourses()) {
@@ -293,7 +307,7 @@ class ClientHandler extends Thread {
                                     if (course.getCourseId().equals(split[2])) {
                                         student.addCourseAndUnit(course);
                                         Main.removeLineFromFile("src/models/students.txt", split[1]);
-                                        Main.writeData(student.toString() + "/0.0","src/models/students.txt");
+                                        Main.writeData(studentCurrentLineInDb + "~" + split[2] + "/" + "0.0","src/models/students.txt");
                                     }
                                 }
                             }
@@ -346,6 +360,11 @@ class ClientHandler extends Thread {
                         }
                     }
 
+                    if (scores.isEmpty()) {
+                        writer("404");
+                        break;
+                    }
+
                     StringBuilder response = new StringBuilder();
                     for (double score : scores) {
                         response.append("|").append(score);
@@ -368,6 +387,7 @@ class ClientHandler extends Thread {
                             courseIDs.add(parts[0]);// we want to store course ids in this list
                         }
                     }
+
 //                    System.out.println(courseIDs.size());
 //                    for (String s: courseIDs) {
 //                        System.out.println(s);
@@ -435,6 +455,27 @@ class ClientHandler extends Thread {
                 } catch (IOException e) {
                     System.err.println(e);
                 }
+                break;
+            }
+            case "getStudentCountOfUnits": {
+                for (Student student: Faculty.getStudents()) {
+                    if (student.getId().equals(split[1])) {
+                        System.out.println(student.toString());
+                        try {
+                            System.out.println("400|" + student.getCountOfUnits());
+                            writer("400|" + student.getAllTimeAverage());
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
+                    } else {
+                        try {
+                            writer("404|");
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
+                    }
+                }
+                break;
             }
         }
     }
