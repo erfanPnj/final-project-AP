@@ -26,3 +26,12 @@ to create a new object of this class.
 This class provide 4 lists, list of students, teachers, courses and assignments which are used to keep 
 everything wrapped in a kinda separated class.
 ```
+### Flutter app photos:
+![photo_1_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/e685640c-6731-4547-8fee-bd9de4aa9ad5)
+![photo_2_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/e454d6d9-c985-406e-9df3-56f884211142)
+![photo_3_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/4f3c2371-927c-4d77-8eb1-702320ce6f07)
+![photo_4_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/ed1b3eee-f783-4c3c-a7fb-5cc2591e2fd9)
+![photo_5_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/b0f2d1da-5bbe-44d0-a0eb-117492d64f5e)
+![photo_11_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/4ca3e843-7264-476b-9f36-12501d946a58)
+![photo_7_2024-07-10_03-04-20](https://github.com/erfanPnj/final-project-AP/assets/166624433/9284155f-dbd4-44c7-9b7b-4486695df7ee)
+
