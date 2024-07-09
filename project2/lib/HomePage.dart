@@ -29,6 +29,11 @@ class HomePage extends StatefulWidget {
   String? studentId;
   String? password;
 
+  static Faculty faculty = Faculty('computer engineering', 2);
+  static int? semester = faculty.semester;
+  static List<Course> coursesForCountOfUnits = [];
+
+
   @override
   State<HomePage> createState() => _HomeState();
 }
@@ -51,8 +56,7 @@ class _HomeState extends State<HomePage> {
   Map<String, bool> isDone = {};
   List<Assignment> tamrina = [];
   List<String> bestAndWorst = [];
-  Faculty faculty = Faculty('computer engineering', 2);
-
+  
   Future<void> getCoursesForOneStudent() async {
     try {
       final socket = await Socket.connect('***REMOVED***', 8080);
@@ -71,6 +75,7 @@ class _HomeState extends State<HomePage> {
               List<String> course = splitor(courseTeacher[0], '~');
               List<String> teacher = splitor(courseTeacher[1], '~');
 
+              var faculty = HomePage.faculty;
               courses.add(
                 Course(
                     course[0],
@@ -82,6 +87,8 @@ class _HomeState extends State<HomePage> {
                     course[5],
                     int.parse(course[6])),
               );
+              HomePage.coursesForCountOfUnits = courses;
+              print(HomePage.coursesForCountOfUnits.length);
               // countOfAssignments += course[6] as int;
             }
           }
@@ -209,7 +216,7 @@ class _HomeState extends State<HomePage> {
                         : Colors.white,
                     elevation: 4,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+                      padding: const EdgeInsets.fromLTRB(8, 30, 3, 30),
                       child: Column(
                         children: [
                           Icon(Icons.heart_broken_outlined),
@@ -232,7 +239,7 @@ class _HomeState extends State<HomePage> {
                         : Colors.white,
                     elevation: 4,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 30, 15, 30),
+                      padding: const EdgeInsets.fromLTRB(15, 30, 10, 30),
                       child: Column(
                         children: [
                           Icon(Icons.emoji_emotions_outlined),
@@ -252,7 +259,7 @@ class _HomeState extends State<HomePage> {
                         : Colors.white,
                     elevation: 4,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15, 30, 15, 30),
+                      padding: const EdgeInsets.fromLTRB(15, 30, 10, 30),
                       child: Column(
                         children: [
                           Icon(Icons.school),

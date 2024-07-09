@@ -3,9 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:project2/Dart/Course.dart';
 import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
-import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,6 +37,10 @@ class _profileState extends State<profile> {
   String? _password;
 
   File? _image;
+  double? average;
+  List<Course> coursesList = HomePage.coursesForCountOfUnits;
+  int countOfUnits = 0;
+  List<String> scores = [];
 
   // Future<void> _pickImage() async {
   //   final picker = ImagePicker();
@@ -56,6 +60,7 @@ class _profileState extends State<profile> {
     _studentId = widget.studentNumber;
     _password = widget.password;
     _loadProfileImage();
+    requestStudentAvg();
   }
 
   Future<void> _pickImage() async {
@@ -121,6 +126,14 @@ class _profileState extends State<profile> {
         );
       },
     );
+  }
+
+  void calculateCountOfUnits() {
+    for (var element in coursesList) {
+      setState(() {
+        countOfUnits += element.countOfUnits;
+      });
+    }
   }
 
   void deleteAccount() async {
@@ -194,8 +207,36 @@ class _profileState extends State<profile> {
     );
   }
 
+  Future<void> requestStudentAvg() async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
+      print('---------------------------------AVG---------------------------');
+      serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
+      serverSocker.flush();
+      serverSocker.listen((event) {
+        double temp = 0.0;
+        scores = splitor(String.fromCharCodes(event), '|');
+        if (scores[0] == '400') {
+          for (int i = 1; i < scores.length; i++) {
+            temp += double.parse(scores[i]);
+          }
+          setState(() {
+            average = temp / (scores.length - 1);
+            for (var element in coursesList) {
+                countOfUnits += element.countOfUnits;             
+            }
+          });
+        }
+      });
+    });
+  }
+
+  List<String> splitor(String entry, String regex) {
+    return entry.split(regex);
+  }
+
   @override
   Widget build(BuildContext context) {
+    int? semesterNumber = HomePage.semester;
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
@@ -317,51 +358,6 @@ class _profileState extends State<profile> {
                   decoration: BoxDecoration(color: Colors.blue.shade900),
                 ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(20, 40, 0, 40),
-              //   child: Row(
-              //     children: [
-              //       Text(
-              //         "name: ",
-              //         style: TextStyle(
-              //           fontSize: 20,
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.only(left: 10),
-              //         child: Text(
-              //           (_name ?? ''),
-              //           style: TextStyle(
-              //             fontSize: 20,
-              //             // fontFamily: FontWeight.bold
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
-              //   child: Row(
-              //     children: [
-              //       Text(
-              //         "Student Number: ",
-              //         style: TextStyle(
-              //           fontSize: 20,
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.only(left: 10),
-              //         child: Text(
-              //           (_studentId ?? ''),
-              //           style: TextStyle(
-              //             fontSize: 20,
-              //           ),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
               SizedBox(
                 height: 30,
               ),
@@ -406,7 +402,9 @@ class _profileState extends State<profile> {
                           Spacer(),
                           Text(
                             // current term
-                            "1402-1403",
+                            semesterNumber == 2
+                                ? '1402-1403, second'
+                                : '1402-1403, first',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400),
@@ -432,7 +430,7 @@ class _profileState extends State<profile> {
                           Spacer(),
                           Text(
                             // count of units
-                            "16",
+                            countOfUnits.toString(),
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400),
@@ -458,7 +456,7 @@ class _profileState extends State<profile> {
                           Spacer(),
                           Text(
                             //Average score
-                            "17.1",
+                            average.toString(),
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400),

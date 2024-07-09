@@ -16,7 +16,7 @@ class Course{
   List<Assignment> deactiveProjects = [];
   int presentedSemester;
   Map<Student, double> scores = {};
-  //int get countOfAssignment => countOfAssignments;
+  int get units => countOfUnits;
 
   Course(this.courseName, this.courseTeacher, this.countOfUnits, this.examDate, this.presentedSemester, this.status, this.courseId, this.countOfAssignments) {
     if (!courseTeacher.presentedCourses.contains(this)) {
