@@ -84,6 +84,8 @@ class _ClassesState extends State<Classes> {
                     int.parse(course[6])),
               );
             }
+          } else if (proccessedResponse[0] == '404') {
+            showToast(context, "you don't have any courses yet!");
           }
         });
       });

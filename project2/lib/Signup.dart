@@ -4,7 +4,8 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:project2/HomePage.dart';
+import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 
@@ -36,8 +37,6 @@ class _SignupState extends State<Signup> {
   RegExp regex2 = RegExp(r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$');
   Future<String> signup() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............Connected to server on port 8080...........');
-
       if (widget.Password.text != widget.confirmPassword.text) {
         _showErrorDialog("Please enter the passwords correctly!");
       } else if (!regex.hasMatch(widget.Studentnumber.text)) {
@@ -56,7 +55,6 @@ class _SignupState extends State<Signup> {
         serverSocket.write(signupRequest);
         serverSocket.flush();
 
-        // Handle server response
         serverSocket.listen((event) {
           response = String.fromCharCodes(event);
           print('Server response: $response');
@@ -64,7 +62,7 @@ class _SignupState extends State<Signup> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => profile(
+                builder: (context) => Navigation(
                   name: widget.Name.text,
                   studentNumber: widget.Studentnumber.text,
                   password: widget.Password.text,

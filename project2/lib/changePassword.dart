@@ -30,17 +30,18 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   void changePassword() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............Connected to server on port 8080...........');
       serverSocket.write(
           'changePass~${widget.studentId}~${_newPasswordController.text}\u0000');
       serverSocket.flush();
       serverSocket.listen((event) {
         String response = String.fromCharCodes(event);
-        if (response == '200') {
-          showToast(context, 'Your password has successfully changed!');
-        } else {
-          showToast(context, 'Failed to change password. Please try again.');
-        }
+        setState(() {
+          if (response == '200') {
+            showToast(context, 'Your password has successfully changed!');
+          } else {
+            showToast(context, 'Failed to change password. Please try again.');
+          }
+        });
       });
     });
   }
@@ -115,8 +116,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                   } else if (!regex2.hasMatch(_newPasswordController.text)) {
                     return ("Your password should contain at least one capital and one small letter and one number!");
                   }
-                  print(_newPasswordController.text);
-                  print(widget.studentId);
                   return null;
                 },
               ),

@@ -1,4 +1,6 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
+import 'dart:collection';
+
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:project2/Dart/Course.dart';
 import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
+import 'package:project2/ToDo.dart';
 import 'package:project2/changePassword.dart';
 import 'package:project2/changeProfile.dart';
 import 'package:path_provider/path_provider.dart';
@@ -41,17 +44,6 @@ class _profileState extends State<profile> {
   List<Course> coursesList = HomePage.coursesForCountOfUnits;
   int countOfUnits = 0;
   List<String> scores = [];
-
-  // Future<void> _pickImage() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _image = File(pickedFile.path);
-  //     });
-  //   }
-  // }
 
   @override
   void initState() {
@@ -138,8 +130,6 @@ class _profileState extends State<profile> {
 
   void deleteAccount() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............Connected to server on port 8080...........');
-
       serverSocket.write(
           'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
       serverSocket.flush();
@@ -161,8 +151,6 @@ class _profileState extends State<profile> {
     Widget delete = TextButton(
       onPressed: () async {
         await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-          print('............Connected to server on port 8080...........');
-
           serverSocket.write(
               'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
           serverSocket.flush();
@@ -209,7 +197,6 @@ class _profileState extends State<profile> {
 
   Future<void> requestStudentAvg() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
-      print('---------------------------------AVG---------------------------');
       serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
       serverSocker.flush();
       serverSocker.listen((event) {
@@ -222,7 +209,7 @@ class _profileState extends State<profile> {
           setState(() {
             average = temp / (scores.length - 1);
             for (var element in coursesList) {
-                countOfUnits += element.countOfUnits;             
+              countOfUnits += element.countOfUnits;
             }
           });
         }
@@ -291,6 +278,7 @@ class _profileState extends State<profile> {
                               padding: const EdgeInsets.only(left: 0),
                               child: IconButton(
                                   onPressed: () {
+                                    tasks = HashMap();
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -456,7 +444,7 @@ class _profileState extends State<profile> {
                           Spacer(),
                           Text(
                             //Average score
-                            average.toString(),
+                            average == null? '0' : average.toString(),
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400),
@@ -545,7 +533,6 @@ class _profileState extends State<profile> {
                 height: 120,
                 width: 300,
               ),
-
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: SizedBox(
@@ -567,69 +554,7 @@ class _profileState extends State<profile> {
                     ),
                   ),
                 ),
-              )
-
-              // SizedBox(
-              //   height: 50,
-              //   width: 200,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       showChangeProfileDialog(context);
-              //     },
-              //     child: Text(
-              //       "Change profile",
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //     style: ButtonStyle(
-              //         backgroundColor:
-              //             MaterialStatePropertyAll(Colors.blue.shade900)),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 0),
-              //   child: SizedBox(
-              //     height: 50,
-              //     width: 200,
-              //     child: ElevatedButton(
-              //       onPressed: () {
-              //         showChangePasswordDialog(context);
-              //       },
-              //       child: Text(
-              //         "Change password",
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //         ),
-              //       ),
-              //       style: ButtonStyle(
-              //           backgroundColor:
-              //               MaterialStatePropertyAll(Colors.blue.shade900)),
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 20),
-              //   child: SizedBox(
-              //     height: 50,
-              //     width: 200,
-              //     child: ElevatedButton(
-              //       onPressed: () {
-              //         showDeleteAccDialog();
-              //       },
-              //       child: Text(
-              //         "Delete account",
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //         ),
-              //       ),
-              //       style: ButtonStyle(
-              //         backgroundColor:
-              //             MaterialStatePropertyAll(Colors.blue.shade900),
-              //       ),
-              //     ),
-              //   ),
-              // )
+              ),
             ],
           ),
         )));

@@ -100,13 +100,9 @@ class _ToDoState extends State<ToDo> {
 
   Future<void> requestTasks() async {
     try {
-      print('Attempting to connect to server...');
       Socket serverSocket = await Socket.connect('***REMOVED***', 8080);
-      print('Connected to server');
-
       serverSocket.write('requestTasks~$_studentId\u0000');
       await serverSocket.flush();
-      print('Request sent to server');
 
       serverSocket.listen((event) {
         response = splitor(String.fromCharCodes(event), '|');
@@ -120,14 +116,11 @@ class _ToDoState extends State<ToDo> {
           showToast(context, 'Something went wrong, please try again');
         }
       }, onError: (error) {
-        print('Error: $error');
         showToast(context, 'Failed to retrieve tasks. Please try again.');
       }, onDone: () {
-        print('Done with the socket connection');
         serverSocket.destroy();
       });
     } catch (e) {
-      print('Socket Exception: $e');
       showToast(context, 'Failed to connect to server. Please try again.');
     }
   }
@@ -319,7 +312,6 @@ class _ToDoState extends State<ToDo> {
                             children: [
                               Text(
                                 current.keys.toList()[index],
-                                // a.toList()[index],
                                 style: TextStyle(
                                   color: Provider.of<ThemeProvider>(context)
                                               .themeData ==
@@ -335,7 +327,6 @@ class _ToDoState extends State<ToDo> {
                                     .toList()[index]
                                     .toString()
                                     .split(' ')[0],
-                                // a.toList()[index],
                                 style: TextStyle(
                                     color: Provider.of<ThemeProvider>(context)
                                                 .themeData ==

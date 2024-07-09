@@ -2,17 +2,12 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:project2/Classes.dart';
 import 'package:project2/Dart/Assignment.dart';
 import 'package:project2/Dart/Course.dart';
 import 'package:project2/Dart/Faculty.dart';
-import 'package:project2/Dart/Student.dart';
 import 'package:project2/Dart/Teacher.dart';
 import 'package:project2/ToDo.dart';
-import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
 import 'package:project2/theme.dart';
@@ -42,7 +37,6 @@ class _HomeState extends State<HomePage> {
   String? _name;
   String? _studentId;
   String? _password;
-  // Student? x;
   String response = '';
   String responseForNewCourse = '';
   late List<String> proccessedResponse = [];
@@ -69,7 +63,6 @@ class _HomeState extends State<HomePage> {
           proccessedResponse = splitor(response, '^');
 
           if (proccessedResponse[0] == '400') {
-            // courses.clear(); // Clear previous courses
             for (int i = 1; i < proccessedResponse.length; i++) {
               List<String> courseTeacher = splitor(proccessedResponse[i], '|');
               List<String> course = splitor(courseTeacher[0], '~');
@@ -88,14 +81,10 @@ class _HomeState extends State<HomePage> {
                     int.parse(course[6])),
               );
               HomePage.coursesForCountOfUnits = courses;
-              print(HomePage.coursesForCountOfUnits.length);
-              // countOfAssignments += course[6] as int;
             }
           }
         });
       });
-
-      //  await socket.done;
     } catch (e) {
       print("Error: $e");
     }
@@ -116,9 +105,6 @@ class _HomeState extends State<HomePage> {
     _name = widget.name;
     _studentId = widget.studentId;
     _password = widget.password;
-    print('home$_name');
-    print('home$_studentId');
-    print('home$_password');
     getCoursesForOneStudent();
     showBestAndWorstScore();
   }
@@ -135,6 +121,9 @@ class _HomeState extends State<HomePage> {
           bestScore = double.parse(bestAndWorst[bestAndWorst.length - 1]);
           print(bestScore);
           print(worstScore);
+        } else if (bestAndWorst[0] == '404') {
+          worstScore = 0;
+          bestScore = 0;
         }
       });
     });
@@ -186,7 +175,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
+              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
               child: Row(
                 children: [
                   Card(
@@ -205,9 +194,6 @@ class _HomeState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //   width: 30,
-                  // ),
                   Spacer(),
                   Card(
                     color: Provider.of<ThemeProvider>(context).themeData ==
@@ -220,7 +206,7 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.heart_broken_outlined),
-                          Text("Worst score's $worstScore")
+                          Text(worstScore == null? "Worst score: 0.0" : "Worst score: $worstScore")
                         ],
                       ),
                     ),
@@ -229,7 +215,7 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(35, 20, 35, 0),
+              padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
               child: Row(
                 children: [
                   Card(
@@ -243,14 +229,11 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.emoji_emotions_outlined),
-                          Text("Best score's $bestScore")
+                          Text(bestScore == null? "Best score: 0.0" : "Worst score: $bestScore")
                         ],
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //   width: 30,
-                  // ),
                   Spacer(),
                   Card(
                     color: Provider.of<ThemeProvider>(context).themeData ==
@@ -352,35 +335,6 @@ class _HomeState extends State<HomePage> {
             SizedBox(
               height: 10,
             ),
-            // ListView.builder(
-            //     scrollDirection: Axis.vertical,
-            //     itemCount: tamrina == null ? 0 : tamrina.length,
-            //     itemBuilder: (context, index) {
-            //       return Stack(
-            //         alignment: Alignment.topRight,
-            //         children: [
-            //           Card(
-            //             color: Provider.of<ThemeProvider>(context).themeData ==
-            //                     darkTheme
-            //                 ? Colors.blue.shade900
-            //                 : Colors.white,
-            //             elevation: 4,
-            //             child: Padding(
-            //               padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-            //               child:
-            //                   // Icon(Icons.lock_clock),
-            //                   Text(tamrina[index].name),
-            //             ),
-            //           ),
-            //           Positioned(
-            //             child: Icon(
-            //               Icons.check_circle,
-            //               color: Colors.green,
-            //             ),
-            //           ),
-            //         ],
-            //       );
-            //     }),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
