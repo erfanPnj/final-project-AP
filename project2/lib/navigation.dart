@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project2/Assignments.dart';
 import 'package:project2/Classes.dart';
-import 'package:project2/Dart/Assignment.dart';
 import 'package:project2/HomePage.dart';
 import 'package:project2/News.dart';
 import 'package:project2/ToDo.dart';
-import 'package:project2/flutter_local_notification.dart';
 
 class Navigation extends StatefulWidget {
   Navigation(
@@ -23,18 +21,12 @@ class Navigation extends StatefulWidget {
 }
 
 class _NavigationState extends State<Navigation> {
-// <<<<<<< HEAD
-//   int _selectedIndex = 0;
-
-//   List<Widget> pages = [Home(), ToDo(), Classes(), Assignments(), ToDo()];
-// =======
   String? name;
   String? studentNumber;
   String? password;
   int _selectedIndex = 0;
 
   List<Widget> pages = [];
-// >>>>>>> e829487e463c1aa1de0a57948655e477921dbdd4
 
   void _onItemTapped(int index) {
     setState(() {
@@ -42,19 +34,12 @@ class _NavigationState extends State<Navigation> {
     });
   }
 
-// <<<<<<< HEAD
-// =======
   @override
   void initState() {
     super.initState();
     name = widget.name;
     studentNumber = widget.studentNumber;
     password = widget.password;
-    print(name);
-    print('\n');
-    print(studentNumber);
-    print('\n');
-    print(password);
     pages = [
       HomePage(name: name, password: password, studentId: studentNumber),
       // HomePage(),

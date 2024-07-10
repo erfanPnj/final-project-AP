@@ -69,10 +69,10 @@ class _ToDoState extends State<ToDo> {
     super.initState();
     _studentId = widget.studentId;
     requestTasks();
-    assinments.clear();
-    assinments.add(Assignment("today task 1", 5, true, '2', ''));
-    assinments.add(Assignment("today task 2", 5, true, '2', ''));
-    assinments.add(Assignment("today task 3", 5, true, '2', ''));
+    // assinments.clear();
+    // assinments.add(Assignment("today task 1", 5, true, '2', ''));
+    // assinments.add(Assignment("today task 2", 5, true, '2', ''));
+    // assinments.add(Assignment("today task 3", 5, true, '2', ''));
     LocalNotifications.showScheduleNotification(
       title: "Todays tasks",
       body: NotificationString(),

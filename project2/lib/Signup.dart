@@ -1,13 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:project2/HomePage.dart';
 import 'package:project2/navigation.dart';
 import 'package:project2/pages.dart/Login.dart';
-import 'package:project2/profile.dart';
 
 class Signup extends StatefulWidget {
   Signup({super.key});

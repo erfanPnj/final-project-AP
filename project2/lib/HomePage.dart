@@ -8,8 +8,6 @@ import 'package:project2/Dart/Course.dart';
 import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Teacher.dart';
 import 'package:project2/ToDo.dart';
-import 'package:project2/flutter_local_notification.dart';
-import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
 import 'package:project2/theme.dart';
@@ -30,7 +28,6 @@ class HomePage extends StatefulWidget {
   static int? semester = faculty.semester;
   static List<Course> coursesForCountOfUnits = [];
 
-
   @override
   State<HomePage> createState() => _HomeState();
 }
@@ -50,9 +47,9 @@ class _HomeState extends State<HomePage> {
   List<MapEntry<String, DateTime>> tasks = [];
   List<bool> expanded = [];
   Map<String, bool> isDone = {};
-  List<Assignment> tamrina = [];
+  List<Assignment> assigns = [];
   List<String> bestAndWorst = [];
-  
+
   Future<void> getCoursesForOneStudent() async {
     try {
       final socket = await Socket.connect('***REMOVED***', 8080);
@@ -102,8 +99,13 @@ class _HomeState extends State<HomePage> {
 
     tasks = ToDo.getTasks().take(2).toList();
     expanded = ToDo.getexpanded().take(2).toList();
-    tamrina = Assignments.getTamrina();
+    assigns = [];
+    assigns = Assignments.getTamrina();
     isDone = Assignments.getIsDone();
+    for (var element in isDone.values) {
+      if (element == true) {
+      }
+    }
     _name = widget.name;
     _studentId = widget.studentId;
     _password = widget.password;
@@ -113,7 +115,6 @@ class _HomeState extends State<HomePage> {
 
   Future<void> showBestAndWorstScore() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
-      print('---------------------------------show---------------------------');
       serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
       serverSocker.flush();
       serverSocker.listen((event) {
@@ -121,8 +122,6 @@ class _HomeState extends State<HomePage> {
         if (bestAndWorst[0] == '400') {
           worstScore = double.parse(bestAndWorst[1]);
           bestScore = double.parse(bestAndWorst[bestAndWorst.length - 1]);
-          print(bestScore);
-          print(worstScore);
         } else if (bestAndWorst[0] == '404') {
           worstScore = 0;
           bestScore = 0;
@@ -137,6 +136,7 @@ class _HomeState extends State<HomePage> {
       countOfAssignments += course.countOfAssignments;
     }
     showBestAndWorstScore();
+    Assignments.getTamrina();
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -208,7 +208,9 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.heart_broken_outlined),
-                          Text(worstScore == null? "Worst score: 0.0" : "Worst score: $worstScore")
+                          Text(worstScore == null
+                              ? "Worst score: 0.0"
+                              : "Worst score: $worstScore")
                         ],
                       ),
                     ),
@@ -231,7 +233,9 @@ class _HomeState extends State<HomePage> {
                       child: Column(
                         children: [
                           Icon(Icons.emoji_emotions_outlined),
-                          Text(bestScore == null? "Best score: 0.0" : "Worst score: $bestScore")
+                          Text(bestScore == null
+                              ? "Best score: 0.0"
+                              : "Best score: $bestScore")
                         ],
                       ),
                     ),
@@ -330,7 +334,7 @@ class _HomeState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 100, 0),
               child: Text(
-                "Completed assignments",
+                "Previous assignments",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -342,7 +346,7 @@ class _HomeState extends State<HomePage> {
                 height: 200,
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: tamrina.length,
+                    itemCount: assigns.length,
                     itemBuilder: (context, index) {
                       return Stack(
                         alignment: Alignment.topRight,
@@ -364,7 +368,7 @@ class _HomeState extends State<HomePage> {
                                     Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    tamrina[index].name,
+                                    assigns[index].name,
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500),
@@ -375,80 +379,19 @@ class _HomeState extends State<HomePage> {
                           ),
                           Positioned(
                             child: Icon(
-                                isDone[tamrina[index]] == true
-                                    ? Icons.check_circle
-                                    : Icons.stop_circle,
-                                color: isDone[tamrina[index]] == true
-                                    ? Colors.green
-                                    : Colors.red),
+                              assigns[index].status == false
+                                  ? Icons.check_circle
+                                  : Icons.stop_circle,
+                              color: assigns[index].status == false
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
                           ),
                         ],
                       );
                     }),
               ),
             ),
-            // SingleChildScrollView(
-            //   scrollDirection: Axis.horizontal,
-            //   child: Padding(
-            //     padding: const EdgeInsets.fromLTRB(30, 20, 10, 20),
-            //     child: Row(
-            //       children: [
-            //         Stack(
-            //           alignment: Alignment.topRight,
-            //           children: <Widget>[
-            //             Card(
-            //               color:
-            //                   Provider.of<ThemeProvider>(context).themeData ==
-            //                           darkTheme
-            //                       ? Colors.blue.shade900
-            //                       : Colors.white,
-            //               elevation: 4,
-            //               child: Padding(
-            //                 padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-            //                 child:
-            //                     // Icon(Icons.lock_clock),
-            //                     Text("dont have an assignment"),
-            //               ),
-            //             ),
-            //             Positioned(
-            //               child: Icon(
-            //                 Icons.check_circle,
-            //                 color: Colors.green,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         SizedBox(
-            //           width: 30,
-            //         ),
-            //         Stack(
-            //           alignment: Alignment.topRight,
-            //           children: <Widget>[
-            //             Card(
-            //               color:
-            //                   Provider.of<ThemeProvider>(context).themeData ==
-            //                           darkTheme
-            //                       ? Colors.blue.shade900
-            //                       : Colors.white,
-            //               elevation: 4,
-            //               child: Padding(
-            //                   padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-            //                   child:
-            //                       // Icon(Icons.lock_clock),
-            //                       Text("dont have an assignment")),
-            //             ),
-            //             Positioned(
-            //               child: Icon(
-            //                 Icons.check_circle,
-            //                 color: Colors.green,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

@@ -3,10 +3,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:project2/HomePage.dart';
 import 'package:project2/Signup.dart';
 import 'package:project2/navigation.dart';
-import 'package:project2/profile.dart';
 
 class login extends StatefulWidget {
   login({super.key});
@@ -30,8 +28,6 @@ class _LogInState extends State<login> {
 
   Future<String> login() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............logged in to server on port 8080...........');
-
       serverSocket.write(
           'logIn~${widget.studentIdController.text}~${widget.passwordController.text}\u0000');
       serverSocket.flush();
@@ -100,21 +96,7 @@ class _LogInState extends State<login> {
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.blue.shade900),
           backgroundColor: Colors.white,
-          // leading: IconButton(
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => HomePage(
-          //           name: proccessedResponse[1],
-          //           studentNumber: widget.studentIdController.text,
-          //           password: widget.passwordController.text,
-          //         ),
-          //       ),
-          //     );
-          //   },
-          //   icon: Icon(Icons.arrow_back_ios_new_sharp),
-          // ),
+          
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,

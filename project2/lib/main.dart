@@ -21,19 +21,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: Provider.of<ThemeProvider>(context).themeData,
         debugShowCheckedModeBanner: false,
         title: "Amozeshyar",
-        home: Navigation(
-          name: 'Abtin',
-          studentNumber: '402243064',
-          password: 'Nafahmi Yevaqt',
-        ));
+        home: login());
   }
 }

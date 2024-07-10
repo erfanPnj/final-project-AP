@@ -15,13 +15,7 @@ class Assignments extends StatefulWidget {
   @override
   State<Assignments> createState() => _AssignmentsState();
   static List<Assignment> getTamrina() {
-    List<Assignment> newAssignments = [];
-    for (var tamrin in assinments) {
-      if (tamrin.status) {
-        newAssignments.add(tamrin);
-      }
-    }
-    return newAssignments;
+    return assinments;
   }
 
   static Map<String, bool> getIsDone() {
@@ -46,22 +40,6 @@ class _AssignmentsState extends State<Assignments> {
     _studentId = widget.studentId;
     requestAssignments();
     validateAssignments(assinments);
-    // Assignment assi1 =
-    //     Assignment("آزمایشگاه", 5, true, "azmayeshgah", "2024.1.1");
-    // Assignment assi2 = Assignment("َap", 4, true, "azmayeshgah", "2024.1.1");
-    // Assignment assi3 = Assignment("fizik2", 6, true, "azmayeshgah", "2024.1.1");
-    // Assignment assi4 = Assignment("riazi2", 5, true, "azmayeshgah", "2024.1.1");
-    // assinments.add(assi1);
-    // assinments.add(assi2);
-    // assinments.add(assi3);
-    // assinments.add(assi4);
-    // isDone[assi1.name] = false;
-    // isDone[assi2.name] = false;
-
-    // isDone[assi3.name] = false;
-    // isDone[assi4.name] = false;
-    print(_studentId);
-    print(assinments.length);
 
     if (_dateController.text == "") {
       setState(() {
@@ -120,17 +98,10 @@ class _AssignmentsState extends State<Assignments> {
         for (var assignment in assinments) {
           List<int> date = [];
           for (String s in assignment.returnDefiningDate) {
-            // print(s);
             date.add(int.parse(s));
           }
-          for (var element in date) {
-            print(element);
-          }
-          // print(date.length);
-          // print('llllllllllllllllllllllllll');
-          // print(int.tryParse(
-          //             _dateController.text.split(" ")[0].split("-")[2]));
-          // print('llllllllllllllllllllllllll');
+          
+          
           List<String> pickedDate = splitor(_dateController.text, '-');
           if (date[2] == int.parse(pickedDate[2]) &&
               int.parse(pickedDate[1]) == date[1] &&
@@ -138,9 +109,21 @@ class _AssignmentsState extends State<Assignments> {
             assignmentsInDay.add(assignment);
           }
         }
-        // _dateController.text = '';
       },
     );
+  }
+
+  Future<void> changeAssignmentStatus (String assignmentId, String assignmentName) async {
+    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+      serverSocket.write('changeAssignmentStatus~$assignmentName~$assignmentId~\u0000');
+      serverSocket.listen((event) {
+        String serverResponse = String.fromCharCodes(event);
+        if (serverResponse == '400') {
+          showToast(context, 'Done!');
+          requestAssignments();
+        } 
+      });
+    });
   }
 
   void _showDialog(Assignment tamrin, Map isDone) {
@@ -294,7 +277,7 @@ class _AssignmentsState extends State<Assignments> {
   }
 
   DateTime parseDate(String dateString) {
-    DateFormat dateFormat = DateFormat('yyyy.MM.dd');
+    DateFormat dateFormat = DateFormat('yyyy.M.d');
     return dateFormat.parse(dateString);
   }
 
@@ -305,104 +288,110 @@ class _AssignmentsState extends State<Assignments> {
 
   @override
   Widget build(BuildContext context) {
+    requestAssignments();
     validateAssignments(assinments);
-    return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Column(
-                children: [
-                  Text(
-                    "Assignments",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+    return RefreshIndicator(
+      onRefresh: requestAssignments,
+      child: Scaffold(
+          body: Padding(
+        padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      "Assignments",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Text(
-                    _dateController.text.split(' ')[0],
-                    style: TextStyle(color: Colors.grey.shade500),
-                  )
-                ],
-              ),
-              Spacer(),
-              Align(
-                  alignment: Alignment.bottomRight,
-                  child: IconButton(
-                      onPressed: (_selectedDate),
-                      icon: Icon(
-                        Icons.calendar_month_rounded,
-                        color: Colors.blue,
-                      )))
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: assignmentsInDay.length,
-              itemBuilder: (context, index) {
-                Assignment _assignment = assignmentsInDay[index];
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: GestureDetector(
-                    onLongPress: () {
-                      _assignment.status
-                          ? setState(() {
-                              _showDialog(_assignment, isDone);
-                            })
-                          : showToast(context, 'this assignment is expired!');
-                    },
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      // height: 60,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Colors.blue.shade900, width: 1)),
-                      child: ListTile(
-                        trailing: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 5, 0),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isDone[_assignment.name] =
-                                    !isDone[_assignment.name]!;
-                              });
-                            },
-                            child: Icon(
-                              isDone[_assignment.name]!
-                                  ? Icons.check_circle
-                                  : Icons.circle_outlined,
-                              color: Colors.blue.shade500,
+                    Text(
+                      _dateController.text.split(' ')[0],
+                      style: TextStyle(color: Colors.grey.shade500),
+                    )
+                  ],
+                ),
+                Spacer(),
+                Align(
+                    alignment: Alignment.bottomRight,
+                    child: IconButton(
+                        onPressed: (_selectedDate),
+                        icon: Icon(
+                          Icons.calendar_month_rounded,
+                          color: Colors.blue,
+                        )))
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: assignmentsInDay.length,
+                itemBuilder: (context, index) {
+                  Assignment _assignment = assignmentsInDay[index];
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: GestureDetector(
+                      onLongPress: () {
+                        _assignment.status
+                            ? setState(() {
+                                _showDialog(_assignment, isDone);
+                              })
+                            : showToast(context, 'this assignment is expired!');
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        // height: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: Colors.blue.shade900, width: 1)),
+                        child: ListTile(
+                          trailing: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  changeAssignmentStatus(_assignment.courseId, _assignment.name);
+                                  isDone[_assignment.name] =
+                                      !isDone[_assignment.name]!;
+                                      _assignment.status = !_assignment.status;
+                                });
+                              },
+                              child: Icon(
+                                isDone[_assignment.name]!
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                                color: Colors.blue.shade500,
+                              ),
                             ),
                           ),
-                        ),
-                        title: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 15, 130, 15),
-                          child: Row(
-                            children: [
-                              Text(
-                                assignmentsInDay[index].name,
-                                style: TextStyle(
-                                    decoration: _assignment.status
-                                        ? TextDecoration.none
-                                        : TextDecoration.lineThrough),
-                              )
-                            ],
+                          title: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 15, 130, 15),
+                            child: Row(
+                              children: [
+                                Text(
+                                  assignmentsInDay[index].name,
+                                  style: TextStyle(
+                                      decoration: _assignment.status
+                                          ? TextDecoration.none
+                                          : TextDecoration.lineThrough),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-    ));
+          ],
+        ),
+      )),
+    );
   }
 
   void _pickfile() async {
@@ -413,7 +402,6 @@ class _AssignmentsState extends State<Assignments> {
     if (result != null && result.files.single.path != null) {
       // File file = File(result.files.single.path);
       PlatformFile file = result.files.first;
-      print(file.name);
       File _file = File(result.files.single.path!);
       setState(() {
         _fileByte = file.size.toString();

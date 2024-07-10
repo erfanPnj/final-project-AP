@@ -34,7 +34,6 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
 
   void ChangeProfileDetails() async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      print('............Connected to server on port 8080...........');
       serverSocket
           .write('changeProfile~${widget.id}~${_nameController.text}\u0000');
       serverSocket.flush();

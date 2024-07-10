@@ -242,37 +242,6 @@ class _ClassesState extends State<Classes> {
       onRefresh: getCoursesForOneStudent,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        // bottomNavigationBar: BottomNavigationBar(
-        //   backgroundColor: Colors.blue.shade900,
-        //   type: BottomNavigationBarType.fixed,
-        //   items: const <BottomNavigationBarItem>[
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.home),
-        //       label: 'Home',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.task),
-        //       label: 'Tasks',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.class_),
-        //       label: 'Classes',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.assignment),
-        //       label: 'Assign',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: Icon(Icons.newspaper),
-        //       label: 'News',
-        //     ),
-        //   ],
-        //   currentIndex: _selectedIndex,
-        //   selectedItemColor: Colors.white,
-        //   unselectedItemColor: Colors.white70,
-        //   onTap: _onItemTapped,
-        // ),
-        // );
         body: Column(
           children: [
             Padding(
