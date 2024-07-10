@@ -35,7 +35,6 @@ public class Teacher {
 
     public void addCourseToThisTeacher (Course course) {
         if (presentedCoursesCount == presentedCourses.size()) {
-            System.out.println("This teacher has reached to maximum course count!");
             return;
         }
         presentedCourses.add(course);
@@ -77,7 +76,7 @@ public class Teacher {
 
     public void deleteAnAssignment (String courseId, String assignmentName) {
         for (int i = 0; i < presentedCoursesCount; i++) { // using enhanced for loop causes ConcurrentModificationException
-            // so we use traditional i and j loops:
+            // ,so we use traditional i and j loops:
             if (presentedCourses.get(i).getCourseId().equals(courseId)) {
                 // after finding the proper course, we check whether it is an active ot a deactivated project.
                 for (int j = 0; j < presentedCourses.get(i).getActiveProjects().toArray().length; j++) {

@@ -51,7 +51,6 @@ public class Main {
 
         // Write the updated lines back to the file
         Files.write(path, updatedLines);
-        out.println("DONE...!");
         scanner.close();
     }
 
@@ -334,6 +333,32 @@ public class Main {
         }
         scanner.close();
     }
+
+    public static void changeAssignmentStatus (String studentId, String title) throws IOException{
+        File file = new File("src/models/assignments.txt");
+        String[] partsOfAssignment;
+        Scanner scanner = new Scanner(file);
+        String previouslyReadLine;
+
+
+        while (scanner.hasNextLine()) {
+            previouslyReadLine = scanner.nextLine();
+            if (previouslyReadLine.contains(studentId) && previouslyReadLine.contains(title)) {
+                partsOfAssignment = previouslyReadLine.split("~");
+                if (partsOfAssignment[2].equals("true")) {
+                    removeLineFromFile("src/models/assignments.txt", previouslyReadLine);
+                    partsOfAssignment[2] = "false";
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (String s: partsOfAssignment) {
+                        stringBuilder.append(s).append("~");
+                    }
+                    writeData(stringBuilder.substring(0, stringBuilder.length() - 1), "src/models/assignments.txt");
+                }
+            }
+        }
+        scanner.close();
+    }
+
 
     public static void main(String[] args) throws IOException {
         out.println(getTodayDate());
@@ -753,11 +778,6 @@ public class Main {
                             Scanner scanner1 = new Scanner(in);
                             out.println("What's the student's id?");
                             String studentId = scanner1.nextLine();
-//
-//                            out.println("What's the student's password?");
-//                            String studentPassword = scanner1.nextLine();
-
-
                             out.println("What's the course id?");
                             Scanner scanner2 = new Scanner(in);
                             String courseId = scanner2.nextLine();

@@ -185,7 +185,6 @@ class ClientHandler extends Thread {
                             courses.append("~").append(s);
                         }
                     }
-                    // create a new line after replacing the old password with a new one
                     // create and write changed info
                     String modifiedData = "";
                     if (studentData.getLast().contains("/")){
@@ -219,7 +218,6 @@ class ClientHandler extends Thread {
                             courses.append("~").append(s);
                         }
                     }
-                    // create a new line after replacing the old password with a new one
                     // create and write changed info
                     String modifiedData = "";
                     if (studentData.getLast().contains("/")){
@@ -270,6 +268,7 @@ class ClientHandler extends Thread {
                         serverResponse.append(s);
                         }
                     }
+                    // use another delimiter like ^ to split network status code with data
                     writer("400" + "^" + serverResponse.toString());
                 } catch (IOException e) {
                     System.err.println(e);
@@ -278,10 +277,6 @@ class ClientHandler extends Thread {
             }
             case "requestForNewCourse": {
                 try {
-//                    List<String> studentData = Main.sendStudentData(split[1]);
-//                    List<String> courseIDs= new ArrayList<>();
-//                    List<String> data;
-//                    String writerResponse = "";
                     List<String> studentOldData = Main.sendStudentData(split[1]);
                     StringBuilder studentCurrentLineInDb = new StringBuilder();
                     for (String s: studentOldData) {
@@ -317,31 +312,6 @@ class ClientHandler extends Thread {
                         writer("404");
                     }
 
-//                    if (writerResponse.equals("400")) {
-//                        courseIDs.add(split[2]);
-//                        data = Main.sendCourseData(courseIDs);
-//
-//                        StringBuilder serverResponse = new StringBuilder();
-//
-//                        for (String s: data) {
-//                            if (data.indexOf(s) != data.size() - 1) {
-//                                serverResponse.append(s).append("^");
-//                            } else {
-//                                serverResponse.append(s);
-//                            }
-//                        }
-//                        try {
-//                            writer(writerResponse + "^" + serverResponse.toString());
-//                        } catch (IOException e) {
-//                            System.err.println(e);
-//                        }
-//                    } else {
-//                        try {
-//                            writer(writerResponse);
-//                        } catch (IOException e) {
-//                            System.err.println(e);
-//                        }
-//                    }
                 } catch (IOException e) {
                     System.err.println(e);
                 }
@@ -388,21 +358,11 @@ class ClientHandler extends Thread {
                         }
                     }
 
-//                    System.out.println(courseIDs.size());
-//                    for (String s: courseIDs) {
-//                        System.out.println(s);
-//                    }
-
                     List<String> assignments = Main.sendAssignmentData(courseIDs);
-//                    System.out.println(assignments.size());
-//                    for (String s: assignments) {
-//                        System.out.println(s);
-//                    }
                     StringBuilder serverData = new StringBuilder();
                     for (String s: assignments) {
                         serverData.append("|").append(s);
                     }
-//                    System.out.println(serverData);
                     if (assignments.isEmpty()) {
                         writer("404");
                     } else {
@@ -474,6 +434,15 @@ class ClientHandler extends Thread {
                             System.err.println(e);
                         }
                     }
+                }
+                break;
+            }
+            case "changeAssignmentStatus": {
+                try {
+                    Main.changeAssignmentStatus(split[1], split[2]);
+                    writer("400");
+                } catch (IOException e) {
+                    System.err.print(e);
                 }
                 break;
             }
