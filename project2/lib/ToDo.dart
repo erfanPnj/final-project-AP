@@ -158,6 +158,11 @@ class _ToDoState extends State<ToDo> {
     return dateFormat.parse(dateString);
   }
 
+  DateTime parseDateForAdd(String dateString) {
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    return dateFormat.parse(dateString);
+  }
+
   List<String> splitor(String entry, String regex) {
     return entry.split(regex);
   }
@@ -182,9 +187,11 @@ class _ToDoState extends State<ToDo> {
     });
   }
 
-  Future<void> addTask(String taskName) async {
+  Future<void> addTask(String taskName, String dateOfTask) async {
     await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
-      serverSocket.write('addTask~$_studentId~$taskName\u0000');
+      List<String> date = splitor(dateOfTask, '-');
+      String convertedDate = '${date[0]}.${date[1]}.${date[2]}';
+      serverSocket.write('addTask~$_studentId~$taskName~$convertedDate\u0000');
       serverSocket.flush();
       serverSocket.listen((event) {
         String response = String.fromCharCodes(event);
@@ -464,9 +471,10 @@ class _ToDoState extends State<ToDo> {
                               onPressed: () {
                                 if (_textController.text.isNotEmpty) {
                                   _addNewItem(
-                                      _textController.text, DateTime.now());
+                                      _textController.text, parseDateForAdd(_dateController.text.toString().split(" ")[0]));
+                                      print(_dateController.text.toString().split(" ")[0]);
                                   Navigator.of(context).pop();
-                                  addTask(_textController.text);
+                                  addTask(_textController.text, _dateController.text.toString().split(" ")[0]);
                                   _textController.clear();
                                   _dateController.clear();
                                 }
