@@ -58,8 +58,8 @@ class _ToDoState extends State<ToDo> {
 
   String NotificationString() {
     String body = '';
-    for (var tamrin in assinments) {
-      body += tamrin.name + ', ';
+    for (var tamrin in tasks.keys) {
+      body += '$tamrin, ';
     }
     return body;
   }
@@ -69,10 +69,6 @@ class _ToDoState extends State<ToDo> {
     super.initState();
     _studentId = widget.studentId;
     requestTasks();
-    // assinments.clear();
-    // assinments.add(Assignment("today task 1", 5, true, '2', ''));
-    // assinments.add(Assignment("today task 2", 5, true, '2', ''));
-    // assinments.add(Assignment("today task 3", 5, true, '2', ''));
     LocalNotifications.showScheduleNotification(
       title: "Todays tasks",
       body: NotificationString(),
