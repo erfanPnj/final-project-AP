@@ -15,7 +15,13 @@ class Assignments extends StatefulWidget {
   @override
   State<Assignments> createState() => _AssignmentsState();
   static List<Assignment> getTamrina() {
-    return assinments;
+    List<Assignment> newAssignments = [];
+    for (var tamrin in assinments) {
+      if (tamrin.status) {
+        newAssignments.add(tamrin);
+      }
+    }
+    return newAssignments;
   }
 
   static Map<String, bool> getIsDone() {

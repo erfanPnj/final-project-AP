@@ -15,10 +15,10 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    Khak["Dif"] = "1@9@0";
-    Khak["Math"] = "2@10@30";
-    Khak["Fizik"] = "4@12@0";
-    Khak["Riazi"] = "2@15@0";
+    Khak["Dif"] = "5@9@0";
+    Khak["Math"] = "5@10@30";
+    Khak["Fizik"] = "7@12@0";
+    Khak["Riazi"] = "6@15@0";
   }
 
   @override

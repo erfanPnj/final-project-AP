@@ -8,6 +8,8 @@ import 'package:project2/Dart/Course.dart';
 import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Teacher.dart';
 import 'package:project2/ToDo.dart';
+import 'package:project2/flutter_local_notification.dart';
+import 'package:project2/pages.dart/Login.dart';
 import 'package:project2/profile.dart';
 import 'package:project2/Assignments.dart';
 import 'package:project2/theme.dart';
@@ -333,70 +335,120 @@ class _HomeState extends State<HomePage> {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 30,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 20, 10, 20),
-                child: Row(
-                  children: [
-                    Stack(
-                      alignment: Alignment.topRight,
-                      children: <Widget>[
-                        Card(
-                          color:
-                              Provider.of<ThemeProvider>(context).themeData ==
+            Center(
+              child: Container(
+                height: 200,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: tamrina.length,
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: Card(
+                              color: Provider.of<ThemeProvider>(context)
+                                          .themeData ==
                                       darkTheme
                                   ? Colors.blue.shade900
                                   : Colors.white,
-                          elevation: 4,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-                            child:
-                                // Icon(Icons.lock_clock),
-                                Text("dont have an assignment"),
+                              elevation: 4,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8, 30, 8, 30),
+                                child:
+                                    // Icon(Icons.lock_clock),
+                                    Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    tamrina[index].name,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
+                          Positioned(
+                            child: Icon(
+                                isDone[tamrina[index]] == true
+                                    ? Icons.check_circle
+                                    : Icons.stop_circle,
+                                color: isDone[tamrina[index]] == true
+                                    ? Colors.green
+                                    : Colors.red),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Stack(
-                      alignment: Alignment.topRight,
-                      children: <Widget>[
-                        Card(
-                          color:
-                              Provider.of<ThemeProvider>(context).themeData ==
-                                      darkTheme
-                                  ? Colors.blue.shade900
-                                  : Colors.white,
-                          elevation: 4,
-                          child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
-                              child:
-                                  // Icon(Icons.lock_clock),
-                                  Text("dont have an assignment")),
-                        ),
-                        Positioned(
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      );
+                    }),
               ),
             ),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Padding(
+            //     padding: const EdgeInsets.fromLTRB(30, 20, 10, 20),
+            //     child: Row(
+            //       children: [
+            //         Stack(
+            //           alignment: Alignment.topRight,
+            //           children: <Widget>[
+            //             Card(
+            //               color:
+            //                   Provider.of<ThemeProvider>(context).themeData ==
+            //                           darkTheme
+            //                       ? Colors.blue.shade900
+            //                       : Colors.white,
+            //               elevation: 4,
+            //               child: Padding(
+            //                 padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+            //                 child:
+            //                     // Icon(Icons.lock_clock),
+            //                     Text("dont have an assignment"),
+            //               ),
+            //             ),
+            //             Positioned(
+            //               child: Icon(
+            //                 Icons.check_circle,
+            //                 color: Colors.green,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         SizedBox(
+            //           width: 30,
+            //         ),
+            //         Stack(
+            //           alignment: Alignment.topRight,
+            //           children: <Widget>[
+            //             Card(
+            //               color:
+            //                   Provider.of<ThemeProvider>(context).themeData ==
+            //                           darkTheme
+            //                       ? Colors.blue.shade900
+            //                       : Colors.white,
+            //               elevation: 4,
+            //               child: Padding(
+            //                   padding: const EdgeInsets.fromLTRB(8, 30, 8, 30),
+            //                   child:
+            //                       // Icon(Icons.lock_clock),
+            //                       Text("dont have an assignment")),
+            //             ),
+            //             Positioned(
+            //               child: Icon(
+            //                 Icons.check_circle,
+            //                 color: Colors.green,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

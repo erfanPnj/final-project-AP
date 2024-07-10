@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:project2/Assignments.dart';
+import 'package:project2/Dart/Assignment.dart';
+import 'package:project2/flutter_local_notification.dart';
 import 'package:project2/theme.dart';
 import 'package:project2/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -53,11 +56,29 @@ class _ToDoState extends State<ToDo> {
     });
   }
 
+  String NotificationString() {
+    String body = '';
+    for (var tamrin in assinments) {
+      body += tamrin.name + ', ';
+    }
+    return body;
+  }
+
   @override
   void initState() {
     super.initState();
     _studentId = widget.studentId;
     requestTasks();
+    assinments.clear();
+    assinments.add(Assignment("today task 1", 5, true, '2', ''));
+    assinments.add(Assignment("today task 2", 5, true, '2', ''));
+    assinments.add(Assignment("today task 3", 5, true, '2', ''));
+    LocalNotifications.showScheduleNotification(
+      title: "Todays tasks",
+      body: NotificationString(),
+      payload: "this is payload",
+    );
+
   }
 
   Future<void> _selectedDate() async {

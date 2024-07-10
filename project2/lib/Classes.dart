@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project2/Dart/Course.dart';
 import 'package:project2/Dart/Faculty.dart';
 import 'package:project2/Dart/Teacher.dart';
+import 'package:project2/calendar.dart';
 
 class Classes extends StatefulWidget {
   Classes(
@@ -443,6 +444,19 @@ class _ClassesState extends State<Classes> {
                 },
               ),
             ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Calendar()));
+                  },
+                  icon: Icon(
+                    Icons.calendar_month,
+                    size: 50,
+                    color: Colors.blue.shade900,
+                  )),
+            )
           ],
         ),
       ),
