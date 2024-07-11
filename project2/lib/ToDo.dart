@@ -70,7 +70,7 @@ class _ToDoState extends State<ToDo> {
     _studentId = widget.studentId;
     requestTasks();
     LocalNotifications.showScheduleNotification(
-      title: "Todays tasks",
+      title: "tasks",
       body: NotificationString(),
       payload: "this is payload",
     );
