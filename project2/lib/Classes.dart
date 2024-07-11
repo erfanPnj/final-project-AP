@@ -57,7 +57,7 @@ class _ClassesState extends State<Classes> {
 
   Future<void> getCoursesForOneStudent() async {
     try {
-      final socket = await Socket.connect('***REMOVED***', 8080);
+      final socket = await Socket.connect('YOURIP', 8080);
       socket.write('getCoursesForOneStudent~${widget.studentNumber}\u0000');
       socket.flush();
 
@@ -98,7 +98,7 @@ class _ClassesState extends State<Classes> {
   }
 
   Future<void> requestForNewCourse() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write(
           'requestForNewCourse~${widget.studentNumber}~${_controller.text}\u0000');
       serverSocket.listen((event) {

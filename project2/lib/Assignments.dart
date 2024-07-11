@@ -50,7 +50,7 @@ class _AssignmentsState extends State<Assignments> {
   }
 
   Future<void> requestAssignments() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write('requestAssignments~$_studentId~\u0000');
       serverSocket.listen((event) {
         response = splitor(String.fromCharCodes(event), "|");
@@ -114,7 +114,7 @@ class _AssignmentsState extends State<Assignments> {
   }
 
   Future<void> changeAssignmentStatus (String assignmentId, String assignmentName) async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write('changeAssignmentStatus~$assignmentName~$assignmentId~\u0000');
       serverSocket.listen((event) {
         String serverResponse = String.fromCharCodes(event);

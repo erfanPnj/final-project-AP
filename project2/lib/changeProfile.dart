@@ -33,7 +33,7 @@ class _ChangeProfileDetailsState extends State<ChangeProfileDetails> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void ChangeProfileDetails() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket
           .write('changeProfile~${widget.id}~${_nameController.text}\u0000');
       serverSocket.flush();

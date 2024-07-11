@@ -52,7 +52,7 @@ class _HomeState extends State<HomePage> {
 
   Future<void> getCoursesForOneStudent() async {
     try {
-      final socket = await Socket.connect('***REMOVED***', 8080);
+      final socket = await Socket.connect('YOURIP', 8080);
       socket.write('getCoursesForOneStudent~${widget.studentId}\u0000');
       socket.flush();
 
@@ -114,7 +114,7 @@ class _HomeState extends State<HomePage> {
   }
 
   Future<void> showBestAndWorstScore() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
+    await Socket.connect('YOURIP', 8080).then((serverSocker) {
       serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
       serverSocker.flush();
       serverSocker.listen((event) {

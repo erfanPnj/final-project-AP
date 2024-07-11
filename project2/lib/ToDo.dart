@@ -117,7 +117,7 @@ class _ToDoState extends State<ToDo> {
 
   Future<void> requestTasks() async {
     try {
-      Socket serverSocket = await Socket.connect('***REMOVED***', 8080);
+      Socket serverSocket = await Socket.connect('YOURIP', 8080);
       serverSocket.write('requestTasks~$_studentId\u0000');
       await serverSocket.flush();
 
@@ -168,7 +168,7 @@ class _ToDoState extends State<ToDo> {
   }
 
   Future<void> changeTaskStatus(String title) async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write('changeTaskStatus~$_studentId~$title\u0000');
       serverSocket.flush();
       serverSocket.listen((event) {
@@ -181,14 +181,14 @@ class _ToDoState extends State<ToDo> {
   }
 
   Future<void> deleteTask(String taskName) async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write('deleteTask~$_studentId~$taskName\u0000');
       serverSocket.flush();
     });
   }
 
   Future<void> addTask(String taskName, String dateOfTask) async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       List<String> date = splitor(dateOfTask, '-');
       String convertedDate = '${date[0]}.${date[1]}.${date[2]}';
       serverSocket.write('addTask~$_studentId~$taskName~$convertedDate\u0000');

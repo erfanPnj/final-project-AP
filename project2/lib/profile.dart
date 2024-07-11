@@ -129,7 +129,7 @@ class _profileState extends State<profile> {
   }
 
   void deleteAccount() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write(
           'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
       serverSocket.flush();
@@ -150,7 +150,7 @@ class _profileState extends State<profile> {
   Future<void> showDeleteAccDialog() async {
     Widget delete = TextButton(
       onPressed: () async {
-        await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+        await Socket.connect('YOURIP', 8080).then((serverSocket) {
           serverSocket.write(
               'deleteAccount~${widget.name}~${widget.studentNumber}~${widget.password}\u0000');
           serverSocket.flush();
@@ -196,7 +196,7 @@ class _profileState extends State<profile> {
   }
 
   Future<void> requestStudentAvg() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocker) {
+    await Socket.connect('YOURIP', 8080).then((serverSocker) {
       serverSocker.write('getBestAndWorstScore~$_studentId\u0000');
       serverSocker.flush();
       serverSocker.listen((event) {

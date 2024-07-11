@@ -33,7 +33,7 @@ class _SignupState extends State<Signup> {
   RegExp regex = RegExp(r'^\d+$');
   RegExp regex2 = RegExp(r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).+$');
   Future<String> signup() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       if (widget.Password.text != widget.confirmPassword.text) {
         _showErrorDialog("Please enter the passwords correctly!");
       } else if (!regex.hasMatch(widget.Studentnumber.text)) {

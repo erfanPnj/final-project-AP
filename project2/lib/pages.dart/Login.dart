@@ -27,7 +27,7 @@ class _LogInState extends State<login> {
   }
 
   Future<String> login() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write(
           'logIn~${widget.studentIdController.text}~${widget.passwordController.text}\u0000');
       serverSocket.flush();

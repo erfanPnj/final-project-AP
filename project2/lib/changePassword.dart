@@ -29,7 +29,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void changePassword() async {
-    await Socket.connect('***REMOVED***', 8080).then((serverSocket) {
+    await Socket.connect('YOURIP', 8080).then((serverSocket) {
       serverSocket.write(
           'changePass~${widget.studentId}~${_newPasswordController.text}\u0000');
       serverSocket.flush();
