@@ -410,7 +410,7 @@ class ClientHandler extends Thread {
             }
             case "addTask": {
                 try {
-                    Main.writeData(split[2] + "~" + split[1] + "~" + Main.getTodayDate() + "~" + "false" + "\n", "src/models/tasks.txt");
+                    Main.writeData(split[2] + "~" + split[1] + "~" + split[3] + "~" + "false" + "\n", "src/models/tasks.txt");
                     writer("400");
                 } catch (IOException e) {
                     System.err.println(e);
